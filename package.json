@@ -1,0 +1,14 @@
+{
+  "name": "ezqrnode",
+  "version": "0.1.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "cuong.bui@tomosia.com",
+  "license": "ISC",
+  "dependencies": {
+    "easyqrcodejs-nodejs": "^3.5.0"
+  }
+}

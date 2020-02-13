@@ -1,0 +1,16 @@
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": false,
+  "bracketSpacing": true,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": ["*.yml", "*.scss"],
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
+}

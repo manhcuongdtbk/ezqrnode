@@ -1,8 +1,13 @@
 {
-  "editor.rulers": [80],
+  "editor.rulers": [100],
   "editor.scrollBeyondLastLine": false,
   "editor.tabSize": 2,
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
-  "files.trimTrailingWhitespace": true
+  "files.trimTrailingWhitespace": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "editor.formatOnSave": true
 }

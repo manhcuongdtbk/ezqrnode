@@ -1173,7 +1173,8 @@ Drawing.prototype.draw = function(oQRCode) {
 					var nowDotScale = _htOption.dotScale;
 					if (row == 6) {
 						// Timing Pattern
-						nowDotScale = 1;
+						// nowDotScale = 1;
+            // Keep timing pattern scale and data module scale equal
 						var timingHColorDark = _htOption.timing_H || _htOption.timing || _htOption.colorDark;
 						_oContext.fillStyle = bIsDark ? timingHColorDark : _htOption.colorLight;
 						_oContext.strokeStyle = _oContext.fillStyle;
@@ -1181,7 +1182,8 @@ Drawing.prototype.draw = function(oQRCode) {
 							nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
 					} else if (col == 6) {
 						// Timing Pattern
-						nowDotScale = 1;
+						// nowDotScale = 1;
+            // Keep timing pattern scale and data module scale equal
 						var timingVColorDark = _htOption.timing_V || _htOption.timing || _htOption.colorDark;
 						_oContext.fillStyle = bIsDark ? timingVColorDark : _htOption.colorLight;
 						_oContext.strokeStyle = _oContext.fillStyle;

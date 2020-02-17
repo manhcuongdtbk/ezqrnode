@@ -1170,6 +1170,43 @@ Drawing.prototype.draw = function(oQRCode) {
 					_oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 					_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 
+					// Position Inner Top Light _ Top Left row
+					var PITL_TL_row = 1
+					// Position Inner Top Light _ Top Left column
+					var PITL_TL_column = [1, 2, 3, 4, 5]
+					// Position Inner Right Light _ Top Left row
+					var PIRL_TL_row = [1, 2, 3, 4, 5]
+					// Position Inner Right Light _ Top Left column
+					var PIRL_TL_column = 5
+					// Position Inner Bottom Light _ Top Left row
+					var PIBL_TL_row = 5
+					// Position Inner Bottom Light _ Top Left column
+					var PIBL_TL_column = PITL_TL_column
+					// Position Inner Left Light _ Top Left row
+					var PILL_TL_row = PIRL_TL_row
+					// Position Inner Left Light _ Top Left column
+					var PILL_TL_column = 1
+
+					// Position Inner Light _ Top Right rows and columns
+					var PITL_TR_row = PITL_TL_row
+					var PITL_TR_column = [nCount - 2, nCount - 3, nCount - 4, nCount - 5, nCount - 6]
+					var PIRL_TR_row = PILL_TL_row
+					var PIRL_TR_column = nCount - 2
+					var PIBL_TR_row = PIBL_TL_row
+					var PIBL_TR_column = PITL_TR_column
+					var PILL_TR_row = PILL_TL_row
+					var PILL_TR_column = nCount - 6
+
+					// Position Inner Light _ Bottom Left rows and columns
+					var PITL_BL_row = nCount - 6
+					var PITL_BL_column = PITL_TL_column
+					var PIRL_BL_row = [nCount - 2, nCount - 3, nCount - 4, nCount - 5, nCount - 6]
+					var PIRL_BL_column = PIRL_TL_column
+					var PIBL_BL_row = nCount - 2
+					var PIBL_BL_column = PITL_BL_column
+					var PILL_BL_row = PIRL_BL_row
+					var PILL_BL_column = PILL_TL_column
+
 					var nowDotScale = _htOption.dotScale;
 					if (row == 6) {
 						// Timing Pattern
@@ -1189,7 +1226,30 @@ Drawing.prototype.draw = function(oQRCode) {
 						_oContext.strokeStyle = _oContext.fillStyle;
 						_oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
 							nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
-					} else {
+					}
+					// Position Inner Light _ Top Left
+					else if (row == PITL_TL_row && PITL_TL_column.includes(col) ||
+									 PIRL_TL_row.includes(row) && col == PIRL_TL_column ||
+									 row == PIBL_TL_row && PIBL_TL_column.includes(col) ||
+									 PILL_TL_row.includes(row) && col == PILL_TL_column) {
+						// Do nothing to make it transparent
+					}
+					// Position Inner Light _ Top Right
+					else if (row == PITL_TR_row && PITL_TR_column.includes(col) ||
+									 PIRL_TR_row.includes(row) && col == PIRL_TR_column ||
+									 row == PIBL_TR_row && PIBL_TR_column.includes(col) ||
+									 PILL_TR_row.includes(row) && col == PILL_TR_column) {
+						// Do nothing to make it transparent
+					}
+					// Position Inner Light _ Bottom Left
+					else if (row == PITL_BL_row && PITL_BL_column.includes(col) ||
+									 PIRL_BL_row.includes(row) && col == PIRL_BL_column ||
+									 row == PIBL_BL_row && PIBL_BL_column.includes(col) ||
+									 PILL_BL_row.includes(row) && col == PILL_BL_column) {
+						// Do nothing to make it transparent
+					}
+					// Data module
+					else {
 
 						if (_htOption.backgroundImage) {
 

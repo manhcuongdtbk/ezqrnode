@@ -8,6 +8,8 @@ var fs = require('fs');
 // Custom dot styles
 // Add roundedRectangle to dot style (1)
 var fillRoundedRect = require('./styles/rounded-rectangle');
+// Add circle to dot style (1)
+var fillCircle = require('./styles/circle')
 
 function QR8bitByte(data) {
 	this.mode = QRMode.MODE_8BIT_BYTE;
@@ -1290,6 +1292,16 @@ Drawing.prototype.draw = function(oQRCode) {
 									nHeight * nowDotScale
 								);
 							}
+							// Add circle to dot style (2)
+							else if (_htOption.dotStyle === 'circle' ) {
+								fillCircle(
+									_oContext,
+									nLeft + nWidth * (1 - nowDotScale) / 2,
+									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
+									nWidth,
+									nowDotScale
+								);
+							}
 						} else {
 							_oContext.strokeStyle = _oContext.fillStyle;
 
@@ -1311,6 +1323,16 @@ Drawing.prototype.draw = function(oQRCode) {
 									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
 									nWidth * nowDotScale,
 									nHeight * nowDotScale
+								);
+							}
+							// Add circle to dot style (3)
+							else if (_htOption.dotStyle === 'circle' ) {
+								fillCircle(
+									_oContext,
+									nLeft + nWidth * (1 - nowDotScale) / 2,
+									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
+									nWidth,
+									nowDotScale
 								);
 							}
 						}
@@ -1561,7 +1583,7 @@ function QRCode(vOption) {
 				 version: 0, // The symbol versions of QR Code range from Version 1 to Version 40. default 0 means automatically choose the closest version based on the text length.
 
 		// ==== Dot Style
-		dotStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
+		dotStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
 	};
 	if (typeof vOption === 'string') {

@@ -5,6 +5,9 @@ var {
 } = require('canvas');
 
 var fs = require('fs');
+// Custom dot styles
+// Add roundedRectangle to dot style (1)
+var fillRoundedRect = require('./styles/rounded-rectangle');
 
 function QR8bitByte(data) {
 	this.mode = QRMode.MODE_8BIT_BYTE;
@@ -1267,15 +1270,49 @@ Drawing.prototype.draw = function(oQRCode) {
 								_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 								_oContext.strokeStyle = _oContext.fillStyle;
 							}
-                                _oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
-                                	nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
+                                // _oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
+																// 	nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
 
+							// Add roundedRectangle to dot style (2)
+							if (_htOption.dotStyle === 'roundedRectangle') {
+								fillRoundedRect(
+									_oContext,
+									nLeft + nWidth * (1 - nowDotScale) / 2,
+									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
+									nWidth * nowDotScale,
+									nHeight * nowDotScale
+								);
+							} else if (_htOption.dotStyle === 'rectangle') {
+								_oContext.fillRect(
+									nLeft + nWidth * (1 - nowDotScale) / 2,
+									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
+									nWidth * nowDotScale,
+									nHeight * nowDotScale
+								);
+							}
 						} else {
 							_oContext.strokeStyle = _oContext.fillStyle;
 
-							_oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
-								nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
+							// _oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
+							// 	nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
 
+							// Add roundedRectangle to dot style (3)
+							if (_htOption.dotStyle === 'roundedRectangle') {
+								fillRoundedRect(
+									_oContext,
+									nLeft + nWidth * (1 - nowDotScale) / 2,
+									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
+									nWidth * nowDotScale,
+									nHeight * nowDotScale
+								);
+							} else if (_htOption.dotStyle === 'rectangle') {
+								_oContext.fillRect(
+									nLeft + nWidth * (1 - nowDotScale) / 2,
+									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
+									nWidth * nowDotScale,
+									nHeight * nowDotScale
+								);
+							}
 						}
 					}
 				}
@@ -1521,7 +1558,10 @@ function QRCode(vOption) {
         quality: 0.75, // An object specifying the quality (0 to 1). default is 0.75. (JPGs only)
 
          // ==== Versions
-         version: 0 // The symbol versions of QR Code range from Version 1 to Version 40. default 0 means automatically choose the closest version based on the text length.
+				 version: 0, // The symbol versions of QR Code range from Version 1 to Version 40. default 0 means automatically choose the closest version based on the text length.
+
+		// ==== Dot Style
+		dotStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
 
 	};
 	if (typeof vOption === 'string') {

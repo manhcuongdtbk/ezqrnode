@@ -1046,7 +1046,9 @@ var Drawing = function(htOption) {
 	this._oContext.quality = 'best'; //'fast'|'good'|'best'|'nearest'|'bilinear'
 	this._oContext.textDrawingMode = 'path'; // 'path'|'glyph'
 	this._oContext.antialias = 'gray'; // 'default'|'none'|'gray'|'subpixel'
-	this._bIsPainted = false;
+
+	// Fix duplicate this._bIsPainted = false
+	// this._bIsPainted = false;
 
 
 	this._bSupportDataURI = null;
@@ -1082,11 +1084,15 @@ Drawing.prototype.draw = function(oQRCode) {
 	this._canvas.width = this._htOption.width + this._htOption.quietZone * 2;
 	this._canvas.height = this._htOption.height + this._htOption.quietZone * 2;
 
-    this._htOption.autoColor=true;
+		// Fix always autoColor (1)
+    // this._htOption.autoColor=true;
 
     var autoColorDark="rgba(0, 0, 0, .6)";
-    var autoColorLight="rgba(255, 255, 255, .7)";
-    var notAutoColorLight="rgba(0,0,0,0)";
+		var autoColorLight="rgba(255, 255, 255, .7)";
+
+		// Fix always autoColor (2)
+		// var notAutoColorLight="rgba(0,0,0,0)";
+
     // JPG
     if(_htOption.format=='JPG' ){
 
@@ -1257,8 +1263,8 @@ Drawing.prototype.draw = function(oQRCode) {
 								_oContext.strokeStyle = bIsDark ? autoColorDark : autoColorLight;
 								_oContext.fillStyle = bIsDark ? autoColorDark : autoColorLight;
 							} else {
-								// _oContext.strokeStyle = bIsDark ? _htOption.colorDark : notAutoColorLight;
-								_oContext.fillStyle = bIsDark ? _htOption.colorDark : notAutoColorLight;
+								// Fix always autoColor (3)
+								_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 								_oContext.strokeStyle = _oContext.fillStyle;
 							}
                                 _oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
@@ -1546,7 +1552,8 @@ function QRCode(vOption) {
     		" is invalidate, PNG compressionLevel must between 0 and 9, now reset to 6. ")
     	this._htOption.compressionLevel = 1;
     }else if(this._htOption.quality < 0 || this._htOption.quality > 1) {
-    	console.warn(this._htOption.compressionLevel +
+			// Fix invalidate JPG quality message
+    	console.warn(this._htOption.quality +
     		" is invalidate, JPG quality must between 0 and 1, now reset to 0.75. ")
     	this._htOption.quality = 0.75;
     }

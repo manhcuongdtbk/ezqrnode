@@ -41,7 +41,6 @@ function fillRoundedRect(ctx, x, y, width, height, radius) {
   ctx.quadraticCurveTo(x, y, x + radius.tl, y);
   ctx.closePath();
   ctx.fill();
-  ctx.stroke();
 
   return ctx;
 }

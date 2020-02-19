@@ -1218,6 +1218,18 @@ Drawing.prototype.draw = function(oQRCode) {
 					var PILL_BL_row = PIRL_BL_row
 					var PILL_BL_column = PILL_TL_column
 
+					// Alignment Inner Light _ Bottom Right rows and columns (currently support version <= 6)
+					var AITL_BR_row = PITL_BL_row - 2
+					var AITL_BR_column = [PILL_TR_column, PILL_TR_column - 1, PILL_TR_column - 2]
+					var AIRL_BR_row = [PITL_BL_row, PITL_BL_row - 1, PITL_BL_row - 2]
+					var AIRL_BR_column = AITL_BR_column[0]
+					var AIBL_BR_row = PITL_BL_row
+					var AIBL_BR_column = AITL_BR_column
+					var AILL_BR_row = AIRL_BR_row
+					var AILL_BR_column = AITL_BR_column[2]
+
+					// TODO: Make formula to calculate all the Inner Light of Position and Alignment Pattern
+
 					var nowDotScale = _htOption.dotScale;
 					if (row == 6) {
 						// Timing Pattern
@@ -1257,6 +1269,13 @@ Drawing.prototype.draw = function(oQRCode) {
 									 PIRL_BL_row.includes(row) && col == PIRL_BL_column ||
 									 row == PIBL_BL_row && PIBL_BL_column.includes(col) ||
 									 PILL_BL_row.includes(row) && col == PILL_BL_column) {
+						// Do nothing to make it transparent
+					}
+					// Alignment Inner Light _ Bottom Right
+					else if (row == AITL_BR_row && AITL_BR_column.includes(col) ||
+									 AIRL_BR_row.includes(row) && col == AIRL_BR_column ||
+									 row == AIBL_BR_row && AIBL_BR_column.includes(col) ||
+									 AILL_BR_row.includes(row) && col == AILL_BR_column) {
 						// Do nothing to make it transparent
 					}
 					// Data module

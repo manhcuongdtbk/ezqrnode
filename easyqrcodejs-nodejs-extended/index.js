@@ -1749,6 +1749,16 @@ function QRCode(vOption) {
 		this._htOption.backgroundImageAlpha = 1;
 	}
 
+	if (this._htOption.dotStyle !== 'rectangle' && this._htOption.dotStyle !== 'roundedRectangle' && this._htOption.dotStyle !== 'circle') {
+		console.warn("Dot style '" + this._htOption.dotStyle + "' is invalidate, reset to 'rectangle'")
+		this._htOption.dotStyle = 'rectangle';
+	}
+
+	if (this._htOption.positionStyle !== 'rectangle' && this._htOption.positionStyle !== 'roundedRectangle') {
+		console.warn("Position style '" + this._htOption.positionStyle + "' is invalidate, reset to 'rectangle'")
+		this._htOption.positionStyle = 'rectangle';
+	}
+
 	this._htOption.height = this._htOption.height + this._htOption.titleHeight;
 
 	this._oQRCode = null;

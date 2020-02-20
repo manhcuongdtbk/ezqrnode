@@ -1687,7 +1687,7 @@ function QRCode(vOption) {
 
         // ==== Images format
         format: 'PNG', // 'PNG', 'JPG'
-        compressionLevel: 6, // ZLIB compression level (0-9). default is 6
+        compressionLevel: 0, // ZLIB compression level (0-9). default is 0
         quality: 0.75, // An object specifying the quality (0 to 1). default is 0.75. (JPGs only)
 
          // ==== Versions
@@ -1728,8 +1728,8 @@ function QRCode(vOption) {
     }
     if (this._htOption.format=='PNG' && (this._htOption.compressionLevel < 0 || this._htOption.compressionLevel > 9)) {
     	console.warn(this._htOption.compressionLevel +
-    		" is invalidate, PNG compressionLevel must between 0 and 9, now reset to 6. ")
-    	this._htOption.compressionLevel = 1;
+    		" is invalidate, PNG compressionLevel must between 0 and 9, now reset to 0. ")
+    	this._htOption.compressionLevel = 0;
     }else if(this._htOption.quality < 0 || this._htOption.quality > 1) {
 			// Fix invalidate JPG quality message
     	console.warn(this._htOption.quality +

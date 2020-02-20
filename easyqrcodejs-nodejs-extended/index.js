@@ -1148,6 +1148,12 @@ Drawing.prototype.draw = function(oQRCode) {
 		bgImg.src = _htOption.backgroundImage;
 		// DoSomething
 	} else {
+		// Add rotate QR Code without background around its center point
+		var canvasXCenter = t._canvas.width / 2;
+		var canvasYCenter = t._canvas.height / 2;
+		_oContext.translate(canvasXCenter, canvasYCenter);
+		_oContext.rotate(Math.PI / 180 * _htOption.degreeRotation);
+		_oContext.translate(-canvasXCenter, -canvasYCenter);
 		drawQrcode.call(t, oQRCode);
 	}
 
@@ -1692,6 +1698,9 @@ function QRCode(vOption) {
 
 		// ==== Position style
 		positionStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
+
+		// ==== Degree Rotation
+		degreeRotation: 0, // 0, 90, 180, 270
 
 	};
 	if (typeof vOption === 'string') {

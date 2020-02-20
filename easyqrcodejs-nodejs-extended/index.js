@@ -1631,8 +1631,8 @@ function QRCode(vOption) {
 		width: 256,
 		height: 256,
 		typeNumber: 4,
-		colorDark: "#000000",
-		colorLight: "#ffffff",
+		colorDark: 'rgba(0, 0, 0, 0.6)',
+		colorLight: 'rgba(255, 255, 255, 0.7)',
 		correctLevel: QRErrorCorrectLevel.H,
 
 		dotScale: 1, // Must be greater than 0, less than or equal to 1. default is 1

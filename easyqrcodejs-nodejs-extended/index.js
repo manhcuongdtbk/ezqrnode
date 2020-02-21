@@ -1362,47 +1362,61 @@ Drawing.prototype.draw = function (oQRCode) {
               var timingHColorDark = _htOption.timing_H || _htOption.timing || _htOption.colorDark;
               _oContext.fillStyle = bIsDark ? timingHColorDark : _htOption.colorLight;
               _oContext.strokeStyle = _oContext.fillStyle;
-              // TODO: Add timing style
-              _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+
+              switch (_htOption.timingStyle) {
+                case 'roundedRectangle':
+                  fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
+                  break;
+                case 'rectangle':
+                  _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+                  break;
+                case 'circle':
+                  fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
+                  break;
+              }
             }
             // Vertical timing pattern
             else if (col == 6) {
               var timingVColorDark = _htOption.timing_V || _htOption.timing || _htOption.colorDark;
               _oContext.fillStyle = bIsDark ? timingVColorDark : _htOption.colorLight;
               _oContext.strokeStyle = _oContext.fillStyle;
-              // TODO: Add timing style
-              _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+
+              switch (_htOption.timingStyle) {
+                case 'roundedRectangle':
+                  fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
+                  break;
+                case 'rectangle':
+                  _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+                  break;
+                case 'circle':
+                  fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
+                  break;
+              }
             }
             // Data module and alignment
             else {
               if (_htOption.backgroundImage) {
                 if (_htOption.autoColor) {
-                  _oContext.strokeStyle = bIsDark ? autoColorDark : autoColorLight;
                   _oContext.fillStyle = bIsDark ? autoColorDark : autoColorLight;
                 } else {
                   _oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
-                  _oContext.strokeStyle = _oContext.fillStyle;
                 }
 
-                if (_htOption.dotStyle === 'roundedRectangle') {
-                  fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
-                } else if (_htOption.dotStyle === 'rectangle') {
-                  _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
-                }
-                else if (_htOption.dotStyle === 'circle' ) {
-                  fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
-                }
+                _oContext.strokeStyle = _oContext.fillStyle;
               } else {
                 _oContext.strokeStyle = _oContext.fillStyle;
+              }
 
-                if (_htOption.dotStyle === 'roundedRectangle') {
+              switch (_htOption.dotStyle) {
+                case 'roundedRectangle':
                   fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
-                } else if (_htOption.dotStyle === 'rectangle') {
+                  break;
+                case 'rectangle':
                   _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
-                }
-                else if (_htOption.dotStyle === 'circle') {
+                  break;
+                case 'circle':
                   fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
-                }
+                  break;
               }
             }
           }
@@ -1639,6 +1653,9 @@ function QRCode(vOption) {
     // ==== Dot Style
     dotStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
+    // ==== Timing style
+    timingStyle: 'roundedRectangle', // 'rectangle', 'roundedRectangle', 'circle'
+
     // ==== Position style
     positionStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
 
@@ -1696,6 +1713,11 @@ function QRCode(vOption) {
   if (this._htOption.dotStyle !== 'rectangle' && this._htOption.dotStyle !== 'roundedRectangle' && this._htOption.dotStyle !== 'circle') {
     console.warn("Dot style '" + this._htOption.dotStyle + "' is invalidate, reset to 'rectangle'")
     this._htOption.dotStyle = 'rectangle';
+  }
+
+  if (this._htOption.timingStyle !== 'rectangle' && this._htOption.timingStyle !== 'roundedRectangle' && this._htOption.timingStyle !== 'circle') {
+    console.warn("Dot style '" + this._htOption.timingStyle + "' is invalidate, reset to 'rectangle'")
+    this._htOption.timingStyle = 'rectangle';
   }
 
   if (this._htOption.positionStyle !== 'rectangle' && this._htOption.positionStyle !== 'roundedRectangle') {

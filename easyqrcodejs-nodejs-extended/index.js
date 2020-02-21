@@ -6,10 +6,9 @@ var {
 
 var fs = require('fs');
 // Custom dot styles
-// Add roundedRectangle to dot style (1)
 var fillRoundedRect = require('./styles/rounded-rectangle');
-// Add circle to dot style (1)
 var fillCircle = require('./styles/circle')
+var clearRoundedRect = require('./styles/clear-rounded-rectangle')
 
 function QR8bitByte(data) {
 	this.mode = QRMode.MODE_8BIT_BYTE;
@@ -1040,22 +1039,12 @@ function _getUTF8Length(sText) {
 var Drawing = function(htOption) {
 	this._bIsPainted = false;
 	this._htOption = htOption;
-
-
 	this._canvas = createCanvas(200, 200)
-
-
-
 	this._oContext = this._canvas.getContext("2d");
 	this._oContext.patternQuality = 'best'; //'fast'|'good'|'best'|'nearest'|'bilinear'
 	this._oContext.quality = 'best'; //'fast'|'good'|'best'|'nearest'|'bilinear'
 	this._oContext.textDrawingMode = 'path'; // 'path'|'glyph'
 	this._oContext.antialias = 'gray'; // 'default'|'none'|'gray'|'subpixel'
-
-	// Fix duplicate this._bIsPainted = false
-	// this._bIsPainted = false;
-
-
 	this._bSupportDataURI = null;
 };
 
@@ -1089,14 +1078,8 @@ Drawing.prototype.draw = function(oQRCode) {
 	this._canvas.width = this._htOption.width + this._htOption.quietZone * 2;
 	this._canvas.height = this._htOption.height + this._htOption.quietZone * 2;
 
-		// Fix always autoColor (1)
-    // this._htOption.autoColor=true;
-
     var autoColorDark="rgba(0, 0, 0, .6)";
 		var autoColorLight="rgba(255, 255, 255, .7)";
-
-		// Fix always autoColor (2)
-		// var notAutoColorLight="rgba(0,0,0,0)";
 
     // JPG
     if(_htOption.format=='JPG' ){
@@ -1158,7 +1141,6 @@ Drawing.prototype.draw = function(oQRCode) {
 	}
 
 	function drawQrcode(oQRCode) {
-
 		for (var row = 0; row < nCount; row++) {
 			for (var col = 0; col < nCount; col++) {
 				var nLeft = col * nWidth + _htOption.quietZone;
@@ -1168,283 +1150,141 @@ Drawing.prototype.draw = function(oQRCode) {
 
 				var eye = oQRCode.getEye(row, col); // { isDark: true/false, type: PO_TL, PI_TL, PO_TR, PI_TR, PO_BL, PI_BL };
 
-				if (eye) {
-					// Is eye
-					bIsDark = eye.isDarkBlock;
-					var type = eye.type;
+				var positionOuterDarkWidth = nWidth * 7
+				var positionOuterDarkHeight = nHeight * 7
+				var positionInnerLightWidth = nWidth * 5
+				var positionInnerLightHeight = nHeight * 5
+				var positionInnerDarkWidth = nWidth * 3
+				var positionInnerDarkHeight = nHeight * 3
 
-					// PX_XX, PX, colorDark, colorLight
-					var eyeColorDark = _htOption[type] || _htOption[type.substring(0, 2)] || _htOption.colorDark;
+				// Position Outer Dark Top Left Top Left Corner row column
+				var POD_TL_TLC = [0, 0]
+				var isPOD_TL = false
+				var POD_TR_TLC = [0, nCount - 7]
+				var isPOD_TR = false
+				var POD_BL_TLC = [nCount - 7, 0]
+				var isPOD_BL = false
+
+				var POD_color = null
+				var PID_color = null
+
+				if (row == POD_TL_TLC[0] && col == POD_TL_TLC[1]) {
+					isPOD_TL = true
+					POD_color = _htOption['PO_TL'] || _htOption['PO'] || _htOption.colorDark;
+					PID_color = _htOption['PI_TL'] || _htOption['PI'] || _htOption.colorDark;
+				} else if (row == POD_TR_TLC[0] && col == POD_TR_TLC[1]) {
+					isPOD_TR = true
+					POD_color = _htOption['PO_TR'] || _htOption['PO'] || _htOption.colorDark;
+					PID_color = _htOption['PI_TR'] || _htOption['PI'] || _htOption.colorDark;
+				} else if (row == POD_BL_TLC[0] && col == POD_BL_TLC[1]) {
+					isPOD_BL = true
+					POD_color = _htOption['PO_BL'] || _htOption['PO'] || _htOption.colorDark;
+					PID_color = _htOption['PI_BL'] || _htOption['PI'] || _htOption.colorDark;
+				}
+
+				if (isPOD_TL || isPOD_TR || isPOD_BL) {
+					console.log('Cuong')
+					// Current Position Outer Dark Top Left Corner
+					var current_POD_TLC = [nLeft, _htOption.titleHeight + nTop]
+					// Position Inner Light Top Left Corner
+					var PIL_TLC = [current_POD_TLC[0] + nWidth, current_POD_TLC[1] + nHeight]
+
+					// Position Inner Dark Top Left Corner
+					var PID_TLC = [PIL_TLC[0] + nWidth, PIL_TLC[1] + nWidth]
 
 					_oContext.lineWidth = 0;
-					_oContext.strokeStyle = bIsDark ? eyeColorDark : _htOption.colorLight;
-					_oContext.fillStyle = bIsDark ? eyeColorDark : _htOption.colorLight;
 
-					// Corner positions [row, column]
-					// Postion Outer Top Left Corner Coordinates
-					var PO_TL_TLC = [0, 0]
-					var PO_TL_TRC = [0, 6]
-					var PO_TL_BRC = [6, 6]
-					var PO_TL_BLC = [6, 0]
-					// Position Outer Top Right Corner Coordinates
-					var PO_TR_TLC = [0, nCount - 7]
-					var PO_TR_TRC = [0, nCount - 1]
-					var PO_TR_BRC = [6, nCount - 1]
-					var PO_TR_BLC = [6, nCount - 7]
-					// Position Outer Bottom Left Corner Coordinates
-					var PO_BL_TLC = [nCount - 7, 0]
-					var PO_BL_TRC = [nCount - 7, 6]
-					var PO_BL_BRC = [nCount - 1, 6]
-					var PO_BL_BLC = [nCount - 1, 0]
-					// Position Inner Top Left Corner Coordinates
-					var PI_TL_TLC = [PO_TL_TLC[0] + 2, PO_TL_TLC[1] + 2]
-					var PI_TL_TRC = [PO_TL_TRC[0] + 2, PO_TL_TRC[1] - 2]
-					var PI_TL_BRC = [PO_TL_BRC[0] - 2, PO_TL_BRC[1] - 2]
-					var PI_TL_BLC = [PO_TL_BLC[0] - 2, PO_TL_BLC[1] + 2]
-					// Position Inner Top Right Coner Coordinates
-					var PI_TR_TLC = [PO_TR_TLC[0] + 2, PO_TR_TLC[1] + 2]
-					var PI_TR_TRC = [PO_TR_TRC[0] + 2, PO_TR_TRC[1] - 2]
-					var PI_TR_BRC = [PO_TR_BRC[0] - 2, PO_TR_BRC[1] - 2]
-					var PI_TR_BLC = [PO_TR_BLC[0] - 2, PO_TR_BLC[1] + 2]
-					// Position Inner Bottom Left Corner Coordinates
-					var PI_BL_TLC = [PO_BL_TLC[0] + 2, PO_BL_TLC[1] + 2]
-					var PI_BL_TRC = [PO_BL_TRC[0] + 2, PO_BL_TRC[1] - 2]
-					var PI_BL_BRC = [PO_BL_BRC[0] - 2, PO_BL_BRC[1] - 2]
-					var PI_BL_BLC = [PO_BL_BLC[0] - 2, PO_BL_BLC[1] + 2]
-					// DOING: Position Inner Light Top Left Corner Coordinates
-					var PIL_TL_TLC = [1, 1]
-					var PIL_TL_TRC = [1, 5]
-					var PIL_TL_BRC = [5, 5]
-					var PIL_TL_BLC = [5, 1]
-
-					// Draw position corner with different styles
-					if (_htOption.positionStyle == 'rectangle') {
-						_oContext.fillRect(nLeft, _htOption.titleHeight + nTop, nWidth, nHeight);
-					}
-					else if (_htOption.positionStyle == 'roundedRectangle') {
-						if (row == PO_TL_TLC[0] && col == PO_TL_TLC[1] ||
-								row == PO_TR_TLC[0] && col == PO_TR_TLC[1] ||
-								row == PO_BL_TLC[0] && col == PO_BL_TLC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { tl: 30 })
-						}
-						else if (row == PO_TL_TRC[0] && col == PO_TL_TRC[1] ||
-										 row == PO_TR_TRC[0] && col == PO_TR_TRC[1] ||
-										 row == PO_BL_TRC[0] && col == PO_BL_TRC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { tr: 30 })
-						}
-						else if (row == PO_TL_BRC[0] && col == PO_TL_BRC[1] ||
-										 row == PO_TR_BRC[0] && col == PO_TR_BRC[1] ||
-										 row == PO_BL_BRC[0] && col == PO_BL_BRC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { br: 30 })
-						}
-						else if (row == PO_TL_BLC[0] && col == PO_TL_BLC[1] ||
-										 row == PO_TR_BLC[0] && col == PO_TR_BLC[1] ||
-										 row == PO_BL_BLC[0] && col == PO_BL_BLC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { bl: 30 })
-						}
-						else if (row == PI_TL_TLC[0] && col == PI_TL_TLC[1] ||
-										 row == PI_TR_TLC[0] && col == PI_TR_TLC[1] ||
-										 row == PI_BL_TLC[0] && col == PI_BL_TLC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { tl: 30 })
-						}
-						else if (row == PI_TL_TRC[0] && col == PI_TL_TRC[1] ||
-										 row == PI_TR_TRC[0] && col == PI_TR_TRC[1] ||
-										 row == PI_BL_TRC[0] && col == PI_BL_TRC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { tr: 30 })
-						}
-						else if (row == PI_TL_BRC[0] && col == PI_TL_BRC[1] ||
-										 row == PI_TR_BRC[0] && col == PI_TR_BRC[1] ||
-										 row == PI_BL_BRC[0] && col == PI_BL_BRC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { br: 30 })
-						}
-						else if (row == PI_TL_BLC[0] && col == PI_TL_BLC[1] ||
-										 row == PI_TR_BLC[0] && col == PI_TR_BLC[1] ||
-										 row == PI_BL_BLC[0] && col == PI_BL_BLC[1]) {
-							fillRoundedRect(_oContext, nLeft, _htOption.titleHeight + nTop, nWidth, nHeight, { bl: 30 })
-						}
-						else {
-							_oContext.fillRect(nLeft, _htOption.titleHeight + nTop, nWidth, nHeight);
-						}
+					if (_htOption.positionStyle === 'rectangle') {
+						// Draw fill rectangle for the outer position
+						_oContext.strokeStyle = POD_color;
+						_oContext.fillStyle = POD_color;
+						_oContext.fillRect(current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight);
+						// Clear unnecessary fill part inside the rectangle
+						_oContext.clearRect(PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight)
+						// Draw fill rectangle for the inner position
+						_oContext.strokeStyle = PID_color;
+						_oContext.fillStyle = PID_color;
+						_oContext.fillRect(PID_TLC[0], PID_TLC[1], positionInnerDarkWidth, positionInnerDarkHeight)
+					} else if (_htOption.positionStyle === 'roundedRectangle') {
+						// Draw fill rounded rectangle for the outer position
+						_oContext.strokeStyle = POD_color;
+						_oContext.fillStyle = POD_color;
+						fillRoundedRect(_oContext, current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight, 30)
+						// Clear unnecessary fill part inside the rounded rectangle
+						clearRoundedRect(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight, 30)
+						// Draw fill rounded rectangle for the inner position
+						_oContext.strokeStyle = PID_color;
+						_oContext.fillStyle = PID_color;
+						fillRoundedRect(_oContext, PID_TLC[0], PID_TLC[1], positionInnerDarkWidth, positionInnerDarkHeight, 30)
 					}
 
-					// _oContext.fillRect(nLeft, _htOption.titleHeight + nTop, nWidth, nHeight);
-				} else {
-					_oContext.lineWidth = 0;
-					_oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
-					_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
+					// Skip other column of the position outer
+					col += 6;
+				}
+				// TODO: Custom alignment
+				else {
+					if (eye && (eye.type === 'PO_TL' || eye.type === 'PO_TR' || eye.type === 'PO_BL')) {
+						// Skip other column of the position outer
+						col += 6
+					} else {
+						// DOING: change to appropriate color
+						_oContext.lineWidth = 0;
+						_oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
+						_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 
-					// Position Inner Top Light _ Top Left row
-					var PITL_TL_row = 1
-					// Position Inner Top Light _ Top Left column
-					var PITL_TL_column = [1, 2, 3, 4, 5]
-					// Position Inner Right Light _ Top Left row
-					var PIRL_TL_row = [1, 2, 3, 4, 5]
-					// Position Inner Right Light _ Top Left column
-					var PIRL_TL_column = 5
-					// Position Inner Bottom Light _ Top Left row
-					var PIBL_TL_row = 5
-					// Position Inner Bottom Light _ Top Left column
-					var PIBL_TL_column = PITL_TL_column
-					// Position Inner Left Light _ Top Left row
-					var PILL_TL_row = PIRL_TL_row
-					// Position Inner Left Light _ Top Left column
-					var PILL_TL_column = 1
+						var nowDotScale = _htOption.dotScale;
+						// Top left coordinate of the dot
+						var dotX = nLeft + nWidth * (1 - nowDotScale) / 2
+						var dotY = _htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2
+						var dotWidth = nWidth * nowDotScale
+						var dotHeight = nHeight * nowDotScale
 
-					// Position Inner Light _ Top Right rows and columns
-					var PITL_TR_row = PITL_TL_row
-					var PITL_TR_column = [nCount - 2, nCount - 3, nCount - 4, nCount - 5, nCount - 6]
-					var PIRL_TR_row = PILL_TL_row
-					var PIRL_TR_column = nCount - 2
-					var PIBL_TR_row = PIBL_TL_row
-					var PIBL_TR_column = PITL_TR_column
-					var PILL_TR_row = PILL_TL_row
-					var PILL_TR_column = nCount - 6
-
-					// Position Inner Light _ Bottom Left rows and columns
-					var PITL_BL_row = nCount - 6
-					var PITL_BL_column = PITL_TL_column
-					var PIRL_BL_row = [nCount - 2, nCount - 3, nCount - 4, nCount - 5, nCount - 6]
-					var PIRL_BL_column = PIRL_TL_column
-					var PIBL_BL_row = nCount - 2
-					var PIBL_BL_column = PITL_BL_column
-					var PILL_BL_row = PIRL_BL_row
-					var PILL_BL_column = PILL_TL_column
-
-					// Alignment Inner Light _ Bottom Right rows and columns (currently support version <= 6)
-					var AITL_BR_row = PITL_BL_row - 2
-					var AITL_BR_column = [PILL_TR_column, PILL_TR_column - 1, PILL_TR_column - 2]
-					var AIRL_BR_row = [PITL_BL_row, PITL_BL_row - 1, PITL_BL_row - 2]
-					var AIRL_BR_column = AITL_BR_column[0]
-					var AIBL_BR_row = PITL_BL_row
-					var AIBL_BR_column = AITL_BR_column
-					var AILL_BR_row = AIRL_BR_row
-					var AILL_BR_column = AITL_BR_column[2]
-
-					// TODO: Make formula to calculate all the Inner Light of Position and Alignment Pattern
-
-					var nowDotScale = _htOption.dotScale;
-					if (row == 6) {
-						// Timing Pattern
-						// nowDotScale = 1;
-            // Keep timing pattern scale and data module scale equal
-						var timingHColorDark = _htOption.timing_H || _htOption.timing || _htOption.colorDark;
-						_oContext.fillStyle = bIsDark ? timingHColorDark : _htOption.colorLight;
-						_oContext.strokeStyle = _oContext.fillStyle;
-						_oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
-							nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
-					} else if (col == 6) {
-						// Timing Pattern
-						// nowDotScale = 1;
-            // Keep timing pattern scale and data module scale equal
-						var timingVColorDark = _htOption.timing_V || _htOption.timing || _htOption.colorDark;
-						_oContext.fillStyle = bIsDark ? timingVColorDark : _htOption.colorLight;
-						_oContext.strokeStyle = _oContext.fillStyle;
-						_oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
-							nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
-					}
-					// Position Inner Light _ Top Left
-					else if (row == PITL_TL_row && PITL_TL_column.includes(col) ||
-									 PIRL_TL_row.includes(row) && col == PIRL_TL_column ||
-									 row == PIBL_TL_row && PIBL_TL_column.includes(col) ||
-									 PILL_TL_row.includes(row) && col == PILL_TL_column) {
-						// Do nothing to make it transparent
-					}
-					// Position Inner Light _ Top Right
-					else if (row == PITL_TR_row && PITL_TR_column.includes(col) ||
-									 PIRL_TR_row.includes(row) && col == PIRL_TR_column ||
-									 row == PIBL_TR_row && PIBL_TR_column.includes(col) ||
-									 PILL_TR_row.includes(row) && col == PILL_TR_column) {
-						// Do nothing to make it transparent
-					}
-					// Position Inner Light _ Bottom Left
-					else if (row == PITL_BL_row && PITL_BL_column.includes(col) ||
-									 PIRL_BL_row.includes(row) && col == PIRL_BL_column ||
-									 row == PIBL_BL_row && PIBL_BL_column.includes(col) ||
-									 PILL_BL_row.includes(row) && col == PILL_BL_column) {
-						// Do nothing to make it transparent
-					}
-					// Alignment Inner Light _ Bottom Right
-					else if (row == AITL_BR_row && AITL_BR_column.includes(col) ||
-									 AIRL_BR_row.includes(row) && col == AIRL_BR_column ||
-									 row == AIBL_BR_row && AIBL_BR_column.includes(col) ||
-									 AILL_BR_row.includes(row) && col == AILL_BR_column) {
-						// Do nothing to make it transparent
-					}
-					// Data module
-					else {
-
-						if (_htOption.backgroundImage) {
-
-							if (_htOption.autoColor) {
-								_oContext.strokeStyle = bIsDark ? autoColorDark : autoColorLight;
-								_oContext.fillStyle = bIsDark ? autoColorDark : autoColorLight;
-							} else {
-								// Fix always autoColor (3)
-								_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
-								_oContext.strokeStyle = _oContext.fillStyle;
-							}
-                                // _oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
-																// 	nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
-
-							// Add roundedRectangle to dot style (2)
-							if (_htOption.dotStyle === 'roundedRectangle') {
-								fillRoundedRect(
-									_oContext,
-									nLeft + nWidth * (1 - nowDotScale) / 2,
-									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
-									nWidth * nowDotScale,
-									nHeight * nowDotScale
-								);
-							} else if (_htOption.dotStyle === 'rectangle') {
-								_oContext.fillRect(
-									nLeft + nWidth * (1 - nowDotScale) / 2,
-									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
-									nWidth * nowDotScale,
-									nHeight * nowDotScale
-								);
-							}
-							// Add circle to dot style (2)
-							else if (_htOption.dotStyle === 'circle' ) {
-								fillCircle(
-									_oContext,
-									nLeft + nWidth * (1 - nowDotScale) / 2,
-									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
-									nWidth,
-									nowDotScale
-								);
-							}
-						} else {
+						// Horizontal timing pattern
+						if (row == 6) {
+							var timingHColorDark = _htOption.timing_H || _htOption.timing || _htOption.colorDark;
+							_oContext.fillStyle = bIsDark ? timingHColorDark : _htOption.colorLight;
 							_oContext.strokeStyle = _oContext.fillStyle;
+							// TODO: Add timing style
+							_oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+						}
+						// Vertical timing pattern
+						else if (col == 6) {
+							var timingVColorDark = _htOption.timing_V || _htOption.timing || _htOption.colorDark;
+							_oContext.fillStyle = bIsDark ? timingVColorDark : _htOption.colorLight;
+							_oContext.strokeStyle = _oContext.fillStyle;
+							// TODO: Add timing style
+							_oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+						}
+						// Data module and alignment
+						else {
+							if (_htOption.backgroundImage) {
+								if (_htOption.autoColor) {
+									_oContext.strokeStyle = bIsDark ? autoColorDark : autoColorLight;
+									_oContext.fillStyle = bIsDark ? autoColorDark : autoColorLight;
+								} else {
+									_oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
+									_oContext.strokeStyle = _oContext.fillStyle;
+								}
 
-							// _oContext.fillRect(nLeft + nWidth * (1 - nowDotScale) / 2, _htOption.titleHeight + nTop + nHeight * (1 -
-							// 	nowDotScale) / 2, nWidth * nowDotScale, nHeight * nowDotScale);
+								if (_htOption.dotStyle === 'roundedRectangle') {
+									fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
+								} else if (_htOption.dotStyle === 'rectangle') {
+									_oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+								}
+								else if (_htOption.dotStyle === 'circle' ) {
+									fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
+								}
+							} else {
+								_oContext.strokeStyle = _oContext.fillStyle;
 
-							// Add roundedRectangle to dot style (3)
-							if (_htOption.dotStyle === 'roundedRectangle') {
-								fillRoundedRect(
-									_oContext,
-									nLeft + nWidth * (1 - nowDotScale) / 2,
-									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
-									nWidth * nowDotScale,
-									nHeight * nowDotScale
-								);
-							} else if (_htOption.dotStyle === 'rectangle') {
-								_oContext.fillRect(
-									nLeft + nWidth * (1 - nowDotScale) / 2,
-									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
-									nWidth * nowDotScale,
-									nHeight * nowDotScale
-								);
-							}
-							// Add circle to dot style (3)
-							else if (_htOption.dotStyle === 'circle' ) {
-								fillCircle(
-									_oContext,
-									nLeft + nWidth * (1 - nowDotScale) / 2,
-									_htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2,
-									nWidth,
-									nowDotScale
-								);
+								if (_htOption.dotStyle === 'roundedRectangle') {
+									fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
+								} else if (_htOption.dotStyle === 'rectangle') {
+									_oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
+								}
+								else if (_htOption.dotStyle === 'circle') {
+									fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
+								}
 							}
 						}
 					}
@@ -1453,7 +1293,6 @@ Drawing.prototype.draw = function(oQRCode) {
 				if (_htOption.dotScale != 1 && !eye) {
 					_oContext.strokeStyle = _htOption.colorLight;
 				}
-
 			}
 		}
 
@@ -1731,7 +1570,6 @@ function QRCode(vOption) {
     		" is invalidate, PNG compressionLevel must between 0 and 9, now reset to 0. ")
     	this._htOption.compressionLevel = 0;
     }else if(this._htOption.quality < 0 || this._htOption.quality > 1) {
-			// Fix invalidate JPG quality message
     	console.warn(this._htOption.quality +
     		" is invalidate, JPG quality must between 0 and 1, now reset to 0.75. ")
     	this._htOption.quality = 0.75;

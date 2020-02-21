@@ -7,6 +7,10 @@
  * @param {Number} scale The scale of the circle
  */
 function fillCircle(ctx, x, y, diameter, scale) {
+  if (typeof scale === 'undefined') {
+    scale = 1;
+  }
+
   var radius = diameter / 2; // Arc radius
   var startAngle = 0; // Starting point on circle, 0 degree
   var endAngle = Math.PI * 2; // End point on circle, 360 degree

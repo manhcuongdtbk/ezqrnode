@@ -89,10 +89,16 @@ QRCodeModel.prototype = {
         type = 'A' + block[1]; // AI, AO
       }
 
-      return {
+      var eyeInformation = {
         isDarkBlock: block[0],
         type: type
       };
+
+      if (block[3]) {
+        eyeInformation.specialPosition = block[3]
+      }
+
+      return eyeInformation
     }
 
     return null;
@@ -237,6 +243,18 @@ QRCodeModel.prototype = {
 
               if (r == -2 || c == -2 || r == 2 || c == 2) {
                 this.modules[row + r][col + c][1] = 'O'; // Position Outer
+
+                if (r == -2 && c == -2) {
+                  this.modules[row + r][col + c][3] = 'TLC' // Top Left Corner
+                } else if (r == -2 && c == 2) {
+                  this.modules[row + r][col + c][3] = 'TRC' // Top Right Corner
+                } else if (r == 2 && c == 2) {
+                  this.modules[row + r][col + c][3] = 'BRC' // Bottom Right Corner
+                } else if (r == 2 && c == -2) {
+                  this.modules[row + r][col + c][3] = 'BLC' // Bottom Left Corner
+                } else if (r == 0 && c == 0) {
+                  this.modules[row + r][col + c][3] = 'C' // Center
+                }
               } else {
                 this.modules[row + r][col + c][1] = 'I'; // Position Inner
               }
@@ -1271,21 +1289,25 @@ Drawing.prototype.draw = function (oQRCode) {
         var nTop = row * nHeight + _htOption.quietZone;
         var bIsDark = oQRCode.isDark(row, col);
         var eye = oQRCode.getEye(row, col); // { isDark: true/false, type: PO_TL, PI_TL, PO_TR, PI_TR, PO_BL, PI_BL };
-        var positionOuterDarkWidth = nWidth * 7
+        var positionOuterDarkWidth = nWidth * 7 // width of one module * position outer dark module quantity
         var positionOuterDarkHeight = nHeight * 7
         var positionInnerLightWidth = nWidth * 5
         var positionInnerLightHeight = nHeight * 5
         var positionInnerDarkWidth = nWidth * 3
         var positionInnerDarkHeight = nHeight * 3
 
-        // Position Outer Dark Top Left Top Left Corner row column
+        // Position Outer Dark Top Left Top Left Corner [row column]
         var POD_TL_TLC = [0, 0]
         var isPOD_TL = false
+        // Position Outer Dark Top Right Top Left Corner [row column]
         var POD_TR_TLC = [0, nCount - 7]
         var isPOD_TR = false
+        // Position Outer Dark Bottom Left Top Left Corner [row column]
         var POD_BL_TLC = [nCount - 7, 0]
         var isPOD_BL = false
+        // Position outer dark color
         var POD_color = null
+        // Position inner dark color
         var PID_color = null
 
         if (row == POD_TL_TLC[0] && col == POD_TL_TLC[1]) {
@@ -1302,60 +1324,123 @@ Drawing.prototype.draw = function (oQRCode) {
           PID_color = _htOption['PI_BL'] || _htOption['PI'] || _htOption.colorDark;
         }
 
+        // Draw the whole position outer and inner
         if (isPOD_TL || isPOD_TR || isPOD_BL) {
-          // Current Position Outer Dark Top Left Corner
+          // Current Position Outer Dark Top Left Corner Coordinate
           var current_POD_TLC = [nLeft, _htOption.titleHeight + nTop]
-          // Position Inner Light Top Left Corner
+          // Position Inner Light Top Left Corner Coordinate
           var PIL_TLC = [current_POD_TLC[0] + nWidth, current_POD_TLC[1] + nHeight]
-          // Position Inner Dark Top Left Corner
+          // Position Inner Dark Top Left Corner Coordinate
           var PID_TLC = [PIL_TLC[0] + nWidth, PIL_TLC[1] + nWidth]
 
           _oContext.lineWidth = 0;
 
-          if (_htOption.positionStyle === 'rectangle') {
-            // Draw fill rectangle for the outer position
-            _oContext.strokeStyle = POD_color;
-            _oContext.fillStyle = POD_color;
-            _oContext.fillRect(current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight);
-            // Clear unnecessary fill part inside the rectangle
-            _oContext.clearRect(PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight)
-            // Draw fill rectangle for the inner position
-            _oContext.strokeStyle = PID_color;
-            _oContext.fillStyle = PID_color;
-            _oContext.fillRect(PID_TLC[0], PID_TLC[1], positionInnerDarkWidth, positionInnerDarkHeight)
-          } else if (_htOption.positionStyle === 'roundedRectangle') {
-            // Draw fill rounded rectangle for the outer position
-            _oContext.strokeStyle = POD_color;
-            _oContext.fillStyle = POD_color;
-            fillRoundedRect(_oContext, current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight, 30)
-            // Clear unnecessary fill part inside the rounded rectangle
-            clearRoundedRect(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight, 30)
-            // Draw fill rounded rectangle for the inner position
-            _oContext.strokeStyle = PID_color;
-            _oContext.fillStyle = PID_color;
-            fillRoundedRect(_oContext, PID_TLC[0], PID_TLC[1], positionInnerDarkWidth, positionInnerDarkHeight, 30)
+          switch (_htOption.positionStyle) {
+            case 'rectangle':
+              // Draw fill rectangle for the outer position
+              _oContext.strokeStyle = POD_color;
+              _oContext.fillStyle = POD_color;
+              _oContext.fillRect(current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight);
+              // Clear unnecessary fill part inside the rectangle
+              _oContext.clearRect(PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight)
+              // Draw fill rectangle for the inner position
+              _oContext.strokeStyle = PID_color;
+              _oContext.fillStyle = PID_color;
+              _oContext.fillRect(PID_TLC[0], PID_TLC[1], positionInnerDarkWidth, positionInnerDarkHeight)
+              break;
+            case 'roundedRectangle':
+              // Draw fill rounded rectangle for the outer position
+              _oContext.strokeStyle = POD_color;
+              _oContext.fillStyle = POD_color;
+              fillRoundedRect(_oContext, current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight, 30)
+              // Clear unnecessary fill part inside the rounded rectangle
+              clearRoundedRect(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight, 30)
+              // Draw fill rounded rectangle for the inner position
+              _oContext.strokeStyle = PID_color;
+              _oContext.fillStyle = PID_color;
+              fillRoundedRect(_oContext, PID_TLC[0], PID_TLC[1], positionInnerDarkWidth, positionInnerDarkHeight, 30)
+              break;
           }
 
-          // Skip other column of the position outer
+          // Skip other column of the position outer dark
           col += 6;
         }
-        // TODO: Custom alignment
+        // Draw timing module and data module
         else {
-          if (eye && (eye.type === 'PO_TL' || eye.type === 'PO_TR' || eye.type === 'PO_BL')) {
-            // Skip other column of the position outer
-            col += 6
-          } else {
-            // DOING: change to appropriate color
-            _oContext.lineWidth = 0;
-            _oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
-            _oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
+          if (eye) {
+            if (eye.type === 'PO_TL' || eye.type === 'PO_TR' || eye.type === 'PO_BL') {
+              // Skip other column of the position outer dark
+              col += 6
+            } else if (eye.type === 'AO') {
+              // Current QRCode version
+              // console.log(oQRCode.typeNumber)
+              if (eye.specialPosition == 'TLC') {
+                // Current Alignment Outer Dark Top Left Corner Coordinate
+                var current_AOD_TLC = [nLeft, _htOption.titleHeight + nTop]
+                var AIL_TLC = [current_AOD_TLC[0] + nWidth, current_AOD_TLC[1] + nHeight]
+                var AID = [AIL_TLC[0] + nWidth, AIL_TLC[1] + nWidth]
+                var alignmentOuterDarkWidth = nWidth * 5
+                var alignmentOuterDarkHeight = nHeight * 5
+                var alignmentInnerLightWidth = nWidth * 3
+                var alignmentInnerLightHeight = nHeight * 3
+                var alignmentInnerDarkWidth = nWidth
+                var alignmentInnerDarkHeight = nHeight
 
+                // Alignment outer dark color
+                var AOD_color = _htOption['AO'] || _htOption.colorDark
+                // TODO: Custom alignment inner dark color
+                var AID_color = _htOption['AI'] || _htOption.colorDark
+
+                switch (_htOption.alignmentStyle) {
+                  case 'rectangle':
+                    // Draw fill rectangle for the outer position
+                    _oContext.strokeStyle = AOD_color;
+                    _oContext.fillStyle = AOD_color;
+                    _oContext.fillRect(current_AOD_TLC[0], current_AOD_TLC[1], alignmentOuterDarkWidth, alignmentOuterDarkHeight);
+                    // Clear unnecessary fill part inside the rectangle
+                    _oContext.clearRect(AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight)
+                    // Draw fill rectangle for the inner position
+                    _oContext.strokeStyle = AID_color;
+                    _oContext.fillStyle = AID_color;
+                    _oContext.fillRect(AID[0], AID[1], alignmentInnerDarkWidth, alignmentInnerDarkHeight)
+                    break;
+                  case 'roundedRectangle':
+                    // Draw fill rounded rectangle for the outer position
+                    _oContext.strokeStyle = AOD_color;
+                    _oContext.fillStyle = AOD_color;
+                    fillRoundedRect(_oContext, current_AOD_TLC[0], current_AOD_TLC[1], alignmentOuterDarkWidth, alignmentOuterDarkHeight, 30)
+                    // Clear unnecessary fill part inside the rounded rectangle
+                    clearRoundedRect(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight, 30)
+                    // Draw fill rounded rectangle for the inner position
+                    _oContext.strokeStyle = AID_color;
+                    _oContext.fillStyle = AID_color;
+                    fillRoundedRect(_oContext, AID[0], AID[1], alignmentInnerDarkWidth, alignmentInnerDarkHeight, 30)
+                    break;
+                }
+              }
+
+              // Skip other column of the alignment outer dark
+              col += 4
+            }
+          } else {
             var nowDotScale = _htOption.dotScale;
             // Top left coordinate of the dot
             var dotX = nLeft + nWidth * (1 - nowDotScale) / 2
             var dotY = _htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2
             var dotWidth = nWidth * nowDotScale
             var dotHeight = nHeight * nowDotScale
+
+            // Draw dot background to increase contrast on hard to see position in the background image
+            var dotBackgroundDarkColor = 'rgba(0, 0, 0, 0.180)'
+            var dotBackgroundLightColor = 'rgba(255, 255, 255, 0.435)'
+            _oContext.fillStyle = bIsDark ? dotBackgroundDarkColor : dotBackgroundLightColor
+            _oContext.strokeStyle = _oContext.fillStyle
+            _oContext.fillRect(nLeft, _htOption.titleHeight + nTop, nWidth, nHeight);
+
+            // TODO: change to appropriate color
+            _oContext.lineWidth = 0;
+            _oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
+            _oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 
             // Horizontal timing pattern
             if (row == 6) {
@@ -1393,7 +1478,7 @@ Drawing.prototype.draw = function (oQRCode) {
                   break;
               }
             }
-            // Data module and alignment
+            // Data module
             else {
               if (_htOption.backgroundImage) {
                 if (_htOption.autoColor) {
@@ -1590,7 +1675,7 @@ function QRCode(vOption) {
     typeNumber: 4,
     colorDark: 'rgba(0, 0, 0, 0.6)',
     colorLight: 'rgba(255, 255, 255, 0.7)',
-    correctLevel: QRErrorCorrectLevel.M,
+    correctLevel: QRCode.CorrectLevel.M,
 
     dotScale: 1, // Must be greater than 0, less than or equal to 1. default is 1
 
@@ -1654,10 +1739,13 @@ function QRCode(vOption) {
     dotStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
     // ==== Timing style
-    timingStyle: 'roundedRectangle', // 'rectangle', 'roundedRectangle', 'circle'
+    timingStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
     // ==== Position style
     positionStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
+
+    // ==== Alignment style
+    alignmentStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
 
     // ==== Degree Rotation
     degreeRotation: 0, // 0, 90, 180, 270

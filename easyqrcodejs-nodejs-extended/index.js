@@ -3,6 +3,7 @@ var fs = require('fs');
 // Custom dot styles
 var fillRoundedRect = require('./styles/rounded-rectangle');
 var fillCircle = require('./styles/circle');
+var fillStar = require('./styles/star');
 var clearRoundedRect = require('./styles/clear-rounded-rectangle');
 var clearCircle = require('./styles/clear-circle');
 
@@ -1527,6 +1528,10 @@ Drawing.prototype.draw = function (oQRCode) {
                 case 'circle':
                   fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
                   break;
+                case 'star':
+                  // Only support dotScale 0.5
+                  fillStar(_oContext, dotX + nWidth / 4, dotY + nWidth / 4, 4, nWidth * nowDotScale / 2, nWidth * nowDotScale / 4);
+                  break;
               }
             }
           }
@@ -1823,7 +1828,7 @@ function QRCode(vOption) {
     this._htOption.backgroundImageAlpha = 1;
   }
 
-  if (this._htOption.dotStyle !== 'rectangle' && this._htOption.dotStyle !== 'roundedRectangle' && this._htOption.dotStyle !== 'circle') {
+  if (this._htOption.dotStyle !== 'rectangle' && this._htOption.dotStyle !== 'roundedRectangle' && this._htOption.dotStyle !== 'circle' && this._htOption.dotStyle !== 'star') {
     console.warn("Dot style '" + this._htOption.dotStyle + "' is invalidate, reset to 'rectangle'")
     this._htOption.dotStyle = 'rectangle';
   }

@@ -4,6 +4,7 @@ var fs = require('fs');
 var fillRoundedRect = require('./styles/rounded-rectangle');
 var fillCircle = require('./styles/circle');
 var clearRoundedRect = require('./styles/clear-rounded-rectangle');
+var clearCircle = require('./styles/clear-circle');
 
 function QR8bitByte(data) {
   this.mode = QRMode.MODE_8BIT_BYTE;
@@ -1360,6 +1361,18 @@ Drawing.prototype.draw = function (oQRCode) {
               _oContext.fillStyle = PID_color;
               fillRoundedRect(_oContext, PID_TLC[0], PID_TLC[1], positionInnerDarkWidth, positionInnerDarkHeight, 30)
               break;
+            case 'circle':
+              // Draw circle for the outer position
+              _oContext.strokeStyle = POD_color;
+              _oContext.fillStyle = POD_color;
+              fillCircle(_oContext, current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth);
+              // Clear unnecessary fill part inside the circle
+              clearCircle(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth)
+              // Draw circle for the inner position
+              _oContext.strokeStyle = PID_color;
+              _oContext.fillStyle = PID_color;
+              fillCircle(_oContext, PID_TLC[0], PID_TLC[1], positionInnerDarkWidth)
+
           }
 
           // Skip other column of the position outer dark
@@ -1742,7 +1755,7 @@ function QRCode(vOption) {
     timingStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
     // ==== Position style
-    positionStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
+    positionStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
     // ==== Alignment style
     alignmentStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
@@ -1808,7 +1821,7 @@ function QRCode(vOption) {
     this._htOption.timingStyle = 'rectangle';
   }
 
-  if (this._htOption.positionStyle !== 'rectangle' && this._htOption.positionStyle !== 'roundedRectangle') {
+  if (this._htOption.positionStyle !== 'rectangle' && this._htOption.positionStyle !== 'roundedRectangle' && this._htOption.positionStyle !== 'circle') {
     console.warn("Position style '" + this._htOption.positionStyle + "' is invalidate, reset to 'rectangle'")
     this._htOption.positionStyle = 'rectangle';
   }

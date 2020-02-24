@@ -1,6 +1,6 @@
 {
   "name": "ezqrnode",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,15 +9,7 @@
   "author": "cuong.bui@tomosia.com",
   "license": "ISC",
   "dependencies": {
-    "canvas": "^2.6.1",
-    "crypto-random-string": "^3.1.0"
+    "canvas": "^2.6.1"
   },
-  "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-prettier": "^3.1.2",
-    "prettier": "^1.19.1"
-  }
+  "devDependencies": {}
 }

@@ -234,3 +234,21 @@ var qrcode = new QRCode(options);
     console.info(data)
   });
   ```
+
+## DEVELOPMENT
+
+### DOCKER
+
+1. Install docker and docker-compose
+2. Up all services
+
+   ```console
+   docker-compose up -d
+   ```
+
+3. Test AWS Lambda handler
+
+   ```console
+   docker-compose exec ezqrnode bash
+   node handler-cli-test.js
+   ```

@@ -183,7 +183,7 @@ var qrcode = new QRCode(options);
   | Timing Style| --- | ---|---|---|
   | **timingStyle** | N | String | `rectangle` | Style of the timing pattern<br/>`rectangle`<br/>`roundedRectangle`
   | Position Style| --- | ---|---|---|
-  | **positionStyle** | N | String | `rectangle` | Style of the position pattern<br/>`rectangle`<br/>`roundedRectangle`
+  | **positionStyle** | N | String | `rectangle` | Style of the position pattern<br/>`rectangle`<br/>`roundedRectangle`<br/>`circle`
   | Alignment Color options| --- |--- |---|---|
   | **AO** | N | String | `undefined` | Alignment Outer CSS color. if not set, the defaut is `colorDark` |
   | **AI** | N | String | `undefined` | Alignment Inner CSS color. if not set, the defaut is `colorDark` |

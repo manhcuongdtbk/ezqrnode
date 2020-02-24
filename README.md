@@ -144,6 +144,26 @@ var qrcode = new QRCode(options);
       /*
       dotStyle: 'rectangle' // A string represents dot style. default is 'rectangle'.
       */
+
+     // ==== Timing style
+     /*
+     timingStyle: 'rectangle', // A string represents timing style. default is 'rectangle'
+     */
+
+    // ==== Position style
+    /*
+    positionStyle: 'rectangle', // A string represents position style. default is 'rectangle'
+    */
+
+    // ==== Alignment style
+    /*
+    alignmentStyle: 'rectangle', // 'A string represents alignment style. default is 'rectangle'
+    */
+
+    // ==== Degree Rotation
+    /*
+    degreeRotation: 0, // An integer number represents dot style. default is 0
+    */
   }
   ```
 
@@ -184,6 +204,8 @@ var qrcode = new QRCode(options);
   | **timingStyle** | N | String | `rectangle` | Style of the timing pattern<br/>`rectangle`<br/>`roundedRectangle`
   | Position Style| --- | ---|---|---|
   | **positionStyle** | N | String | `rectangle` | Style of the position pattern<br/>`rectangle`<br/>`roundedRectangle`<br/>`circle`
+  | Alignment Style| --- | ---|---|---|
+  | **alignmentStyle** | N | String | `rectangle` | Style of the alignment pattern<br/>`rectangle`<br/>`roundedRectangle`<br/>`circle`
   | Alignment Color options| --- |--- |---|---|
   | **AO** | N | String | `undefined` | Alignment Outer CSS color. if not set, the defaut is `colorDark` |
   | **AI** | N | String | `undefined` | Alignment Inner CSS color. if not set, the defaut is `colorDark` |

@@ -1372,7 +1372,7 @@ Drawing.prototype.draw = function (oQRCode) {
               _oContext.strokeStyle = PID_color;
               _oContext.fillStyle = PID_color;
               fillCircle(_oContext, PID_TLC[0], PID_TLC[1], positionInnerDarkWidth)
-
+              break;
           }
 
           // Skip other column of the position outer dark
@@ -1428,6 +1428,18 @@ Drawing.prototype.draw = function (oQRCode) {
                     _oContext.strokeStyle = AID_color;
                     _oContext.fillStyle = AID_color;
                     fillRoundedRect(_oContext, AID[0], AID[1], alignmentInnerDarkWidth, alignmentInnerDarkHeight, 30)
+                    break;
+                  case 'circle':
+                    // Draw fill circle for the outer position
+                    _oContext.strokeStyle = AOD_color;
+                    _oContext.fillStyle = AOD_color;
+                    fillCircle(_oContext, current_AOD_TLC[0], current_AOD_TLC[1], alignmentOuterDarkWidth)
+                    // Clear unnecessary fill part inside the circle
+                    clearCircle(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth)
+                    // Draw fill circle for the inner position
+                    _oContext.strokeStyle = AID_color;
+                    _oContext.fillStyle = AID_color;
+                    fillCircle(_oContext, AID[0], AID[1], alignmentInnerDarkWidth)
                     break;
                 }
               }
@@ -1758,7 +1770,7 @@ function QRCode(vOption) {
     positionStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
     // ==== Alignment style
-    alignmentStyle: 'rectangle', // 'rectangle', 'roundedRectangle'
+    alignmentStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
 
     // ==== Degree Rotation
     degreeRotation: 0, // 0, 90, 180, 270
@@ -1824,6 +1836,11 @@ function QRCode(vOption) {
   if (this._htOption.positionStyle !== 'rectangle' && this._htOption.positionStyle !== 'roundedRectangle' && this._htOption.positionStyle !== 'circle') {
     console.warn("Position style '" + this._htOption.positionStyle + "' is invalidate, reset to 'rectangle'")
     this._htOption.positionStyle = 'rectangle';
+  }
+
+  if (this._htOption.alignmentStyle !== 'rectangle' && this._htOption.alignmentStyle !== 'roundedRectangle' && this._htOption.alignmentStyle !== 'circle') {
+    console.warn("Alignment style '" + this._htOption.alignmentStyle + "' is invalidate, reset to 'rectangle'")
+    this._htOption.alignmentStyle = 'rectangle';
   }
 
   this._htOption.height = this._htOption.height + this._htOption.titleHeight;

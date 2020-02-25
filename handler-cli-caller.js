@@ -17,7 +17,7 @@ const options = {
   // alignmentStyle: 'roundedRectangle',
   // AO: 'purple',
   // AI: 'brown',
-  version: 7,
+  // version: 7,
   // correctLevel: QRCode.CorrectLevel.H,
   // backgroundImage: 'testImage.jpg',
   // degreeRotation: 90,
@@ -29,7 +29,9 @@ const options = {
   // PI_BL: 'orange'
 };
 
+const eventEmulator = { queryStringParameters: options };
+
 (async () => {
-  const generatedQRCode = await handler(options);
+  const generatedQRCode = await handler(eventEmulator);
   console.log(generatedQRCode);
 })();

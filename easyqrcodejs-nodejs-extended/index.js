@@ -1484,6 +1484,10 @@ Drawing.prototype.draw = function (oQRCode) {
                 case 'circle':
                   fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
                   break;
+                case 'star':
+                  // Only support dotScale 0.5
+                  fillStar(_oContext, dotX + nWidth / 4, dotY + nWidth / 4, 4, nWidth * nowDotScale / 2, nWidth * nowDotScale / 4);
+                  break;
               }
             }
             // Vertical timing pattern
@@ -1501,6 +1505,10 @@ Drawing.prototype.draw = function (oQRCode) {
                   break;
                 case 'circle':
                   fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
+                  break;
+                case 'star':
+                  // Only support dotScale 0.5
+                  fillStar(_oContext, dotX + nWidth / 4, dotY + nWidth / 4, 4, nWidth * nowDotScale / 2, nWidth * nowDotScale / 4);
                   break;
               }
             }
@@ -1766,10 +1774,10 @@ function QRCode(vOption) {
     version: 0, // The symbol versions of QR Code range from Version 1 to Version 40. default 0 means automatically choose the closest version based on the text length.
 
     // ==== Dot Style
-    dotStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
+    dotStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle', 'star'
 
     // ==== Timing style
-    timingStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
+    timingStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle', 'star'
 
     // ==== Position style
     positionStyle: 'rectangle', // 'rectangle', 'roundedRectangle', 'circle'
@@ -1833,7 +1841,7 @@ function QRCode(vOption) {
     this._htOption.dotStyle = 'rectangle';
   }
 
-  if (this._htOption.timingStyle !== 'rectangle' && this._htOption.timingStyle !== 'roundedRectangle' && this._htOption.timingStyle !== 'circle') {
+  if (this._htOption.timingStyle !== 'rectangle' && this._htOption.timingStyle !== 'roundedRectangle' && this._htOption.timingStyle !== 'circle' && this._htOption.timingStyle !== 'star') {
     console.warn("Dot style '" + this._htOption.timingStyle + "' is invalidate, reset to 'rectangle'")
     this._htOption.timingStyle = 'rectangle';
   }

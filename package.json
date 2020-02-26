@@ -8,8 +8,8 @@
   },
   "author": "cuong.bui@tomosia.com",
   "license": "ISC",
-  "dependencies": {
-    "canvas": "^2.6.1"
-  },
-  "devDependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "canvas": "2.6.1"
+  }
 }

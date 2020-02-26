@@ -274,3 +274,40 @@ var qrcode = new QRCode(options);
    docker-compose exec ezqrnode bash
    node handler-cli-test.js
    ```
+
+### CREATE THE COMPLETE AWS LAMBDA FUNCTION
+
+An AWS Lambda Function is a folder that contains the handler file and all of it dependencies.
+
+For better development, we should develop the whole AWS Lambda Function locally then zip all of its content and upload the zip file to use on AWS Lambda Function.
+
+After finish developing, run this zip command:
+
+```console
+zip -r -X -x "node_modules/*" -9 "ezqrnode.zip" *
+```
+
+The zip file will be in the same folder with the ezqrnode development folder, named **ezqrnode.zip**.
+
+### PROBLEMS AND SOLUTIONS
+
+1. Node canvas is not fully compatible with AWS Lambda Function
+
+    - [libuuid.so.1: cannot open shared object file: No such file or directory](https://github.com/Automattic/node-canvas/issues/1448)
+    - [node_modules/canvas/build/Release/canvas.node: invalid ELF header](https://github.com/Automattic/node-canvas/issues/1231#issuecomment-417995088)
+
+## PRODUCTION
+
+Always set up AWS Lambda Function in the following order:
+
+- Main function **ezqrnode.zip**
+- Node12Canvas layer
+- CanvasLib64 layer
+
+**Explaination**:
+
+- The main function layer only contains the handler for AWS Lambda Function and the custom qr code generator library. It can not run without the 2 next layers. At this developing moment (2020-02-26), the node _canvas_ package and Amazon's custom AMI doesn't fit so well (missing some libraries).
+
+- Node12Canvas layer contains the node _canvas_ package version 2.6.1. It's the required package to draw the QR Code. You can not use something like a Mac OS / Windows generated node_mudles package because its binary files will not compatible with Amazon's custom AMI
+
+- CanvasLib64 layer contains the missing libraries for node _canvas_ to run on Amazon's custom AMI. Without them, you will receive "libuuid.so.1: cannot open shared object file: No such file or directory" error message

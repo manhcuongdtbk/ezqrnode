@@ -1795,12 +1795,22 @@ function QRCode(vOption) {
     };
   }
 
+  var NUMBER_TYPE_OPTIONS = ['width', 'height', 'dotScale', 'quietZone', 'titleHeight', 'titleTop',
+    'subTitleTop', 'logoWidth', 'logoHeight', 'backgroundImageAlpha', 'compressionLevel', 'quality',
+    'version', 'degreeRotation']
+
   // Overwrites options
   if (vOption) {
     for (var i in vOption) {
+      // Type cast received parameters
+      if (NUMBER_TYPE_OPTIONS.includes(i)) {
+        vOption[i] = Number(vOption[i])
+      }
+
       this._htOption[i] = vOption[i];
     }
   }
+  console.log(this._htOption)
 
   if(this._htOption.version<0 || this._htOption.version>40){
       console.warn("QR Code version '"+this._htOption.version+"' is invalidate, reset to 0")

@@ -281,10 +281,10 @@ An AWS Lambda Function is a folder that contains the handler file and all of it 
 
 For better development, we should develop the whole AWS Lambda Function locally then zip all of its content and upload the zip file to use on AWS Lambda Function.
 
-After finish developing, run this zip command:
+After finish developing, run this zip command (all hidden files and folders are automatically ignored):
 
 ```console
-zip -r -X -x "node_modules/*" -9 "ezqrnode.zip" *
+zip -r -X -x "node_modules/*" "Dockerfile" "docker-compose.yml" "package*.json" "README.md" "handler-cli-caller.js" -9 "ezqrnode.zip" *
 ```
 
 The zip file will be in the same folder with the ezqrnode development folder, named **ezqrnode.zip**.

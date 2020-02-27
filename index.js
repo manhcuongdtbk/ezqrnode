@@ -8,6 +8,10 @@ exports.handler = async (event, context, callback) => {
   const data = await qrcode.toDataURL();
   const response = {
     statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    },
     body: data
   };
 

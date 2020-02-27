@@ -1810,7 +1810,6 @@ function QRCode(vOption) {
       this._htOption[i] = vOption[i];
     }
   }
-  console.log(this._htOption)
 
   if(this._htOption.version<0 || this._htOption.version>40){
       console.warn("QR Code version '"+this._htOption.version+"' is invalidate, reset to 0")

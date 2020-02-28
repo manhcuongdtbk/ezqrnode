@@ -1209,17 +1209,12 @@ Drawing.prototype.draw = function (oQRCode) {
   var _oContext = this._oContext;
   var _htOption = this._htOption;
 
-  if (!_htOption.title && !_htOption.subTitle) {
-    _htOption.height -= _htOption.titleHeight;
-    _htOption.titleHeight = 0;
-  }
-
   var nCount = oQRCode.getModuleCount();
   var nWidth = Math.round(_htOption.width / nCount);
-  var nHeight = Math.round((_htOption.height - _htOption.titleHeight) / nCount);
+  var nHeight = Math.round(_htOption.height / nCount);
   _htOption.quietZone = Math.round(_htOption.quietZone);
   this._htOption.width = nWidth * nCount;
-  this._htOption.height = nHeight * nCount + _htOption.titleHeight;
+  this._htOption.height = nHeight * nCount;
   this._canvas.width = this._htOption.width + this._htOption.quietZone * 2;
   this._canvas.height = this._htOption.height + this._htOption.quietZone * 2;
 
@@ -1265,8 +1260,8 @@ Drawing.prototype.draw = function (oQRCode) {
     bgImg.onload = function () {
       _oContext.globalAlpha = 1;
       _oContext.globalAlpha = _htOption.backgroundImageAlpha;
-      _oContext.drawImage(bgImg, 0, _htOption.titleHeight, _htOption.width + _htOption.quietZone * 2, _htOption.height +
-        _htOption.quietZone * 2 - _htOption.titleHeight);
+      _oContext.drawImage(bgImg, 0, 0, _htOption.width + _htOption.quietZone * 2, _htOption.height +
+        _htOption.quietZone * 2);
       _oContext.globalAlpha = 1;
 
       drawQrcode.call(t, oQRCode);
@@ -1329,7 +1324,7 @@ Drawing.prototype.draw = function (oQRCode) {
         // Draw the whole position outer and inner
         if (isPOD_TL || isPOD_TR || isPOD_BL) {
           // Current Position Outer Dark Top Left Corner Coordinate
-          var current_POD_TLC = [nLeft, _htOption.titleHeight + nTop]
+          var current_POD_TLC = [nLeft, nTop]
           // Position Inner Light Top Left Corner Coordinate
           var PIL_TLC = [current_POD_TLC[0] + nWidth, current_POD_TLC[1] + nHeight]
           // Position Inner Dark Top Left Corner Coordinate
@@ -1390,7 +1385,7 @@ Drawing.prototype.draw = function (oQRCode) {
               // console.log(oQRCode.typeNumber)
               if (eye.specialPosition == 'TLC') {
                 // Current Alignment Outer Dark Top Left Corner Coordinate
-                var current_AOD_TLC = [nLeft, _htOption.titleHeight + nTop]
+                var current_AOD_TLC = [nLeft, nTop]
                 var AIL_TLC = [current_AOD_TLC[0] + nWidth, current_AOD_TLC[1] + nHeight]
                 var AID = [AIL_TLC[0] + nWidth, AIL_TLC[1] + nWidth]
                 var alignmentOuterDarkWidth = nWidth * 5
@@ -1452,7 +1447,7 @@ Drawing.prototype.draw = function (oQRCode) {
             var nowDotScale = _htOption.dotScale;
             // Top left coordinate of the dot
             var dotX = nLeft + nWidth * (1 - nowDotScale) / 2
-            var dotY = _htOption.titleHeight + nTop + nHeight * (1 - nowDotScale) / 2
+            var dotY = nTop + nHeight * (1 - nowDotScale) / 2
             var dotWidth = nWidth * nowDotScale
             var dotHeight = nHeight * nowDotScale
 
@@ -1461,7 +1456,7 @@ Drawing.prototype.draw = function (oQRCode) {
             var dotBackgroundLightColor = 'rgba(255, 255, 255, 0.435)'
             _oContext.fillStyle = bIsDark ? dotBackgroundDarkColor : dotBackgroundLightColor
             _oContext.strokeStyle = _oContext.fillStyle
-            _oContext.fillRect(nLeft, _htOption.titleHeight + nTop, nWidth, nHeight);
+            _oContext.fillRect(nLeft, nTop, nWidth, nHeight);
 
             // TODO: change to appropriate color
             _oContext.lineWidth = 0;
@@ -1551,22 +1546,6 @@ Drawing.prototype.draw = function (oQRCode) {
       }
     }
 
-    if (_htOption.title) {
-      _oContext.fillStyle = _htOption.titleBackgroundColor;
-      _oContext.fillRect(0, 0, t._canvas.width, _htOption.titleHeight+this._htOption.quietZone);
-
-      _oContext.font = _htOption.titleFont;
-      _oContext.fillStyle = _htOption.titleColor;
-      _oContext.textAlign = 'center';
-      _oContext.fillText(_htOption.title, t._canvas.width / 2, this._htOption.quietZone+30);
-    }
-
-    if (_htOption.subTitle) {
-      _oContext.font = _htOption.subTitleFont;
-      _oContext.fillStyle = _htOption.subTitleColor;
-      _oContext.fillText(_htOption.subTitle, t._canvas.width / 2, this._htOption.quietZone+60);
-    }
-
     if (_htOption.logo) {
       var img = new Image();
       img.src = _htOption.logo;
@@ -1595,12 +1574,12 @@ Drawing.prototype.draw = function (oQRCode) {
           //}
           _oContext.fillStyle = _htOption.logoBackgroundColor;
 
-          _oContext.fillRect((_htOption.width + _htOption.quietZone * 2 - imgW) / 2, (_htOption.height + _htOption.titleHeight +
+          _oContext.fillRect((_htOption.width + _htOption.quietZone * 2 - imgW) / 2, (_htOption.height +
             _htOption.quietZone * 2 - imgH) / 2, imgW, imgW);
         }
 
         _oContext.drawImage(img, (_htOption.width + _htOption.quietZone * 2 - imgW) / 2, (_htOption.height +
-          _htOption.titleHeight + _htOption.quietZone * 2 - imgH) / 2, imgW, imgH);
+          _htOption.quietZone * 2 - imgH) / 2, imgW, imgH);
 
         _this._bIsPainted = true;
 
@@ -1720,18 +1699,6 @@ function QRCode(vOption) {
     quietZone: 0,
     quietZoneColor: 'transparent',
 
-    title: "",
-    titleFont: "bold 16px Arial",
-    titleColor: "#000000",
-    titleBackgroundColor: "#ffffff",
-    titleHeight: 0, // Title Height, Include subTitle
-    titleTop: 30, // draws y coordinates. default is 30
-
-    subTitle: "",
-    subTitleFont: "14px Arial",
-    subTitleColor: "#4F4F4F",
-    subTitleTop: 0, // draws y coordinates. default is 0
-
     logo: undefined,
     logoWidth: undefined,
     logoHeight: undefined,
@@ -1795,9 +1762,8 @@ function QRCode(vOption) {
     };
   }
 
-  var NUMBER_TYPE_OPTIONS = ['width', 'height', 'dotScale', 'quietZone', 'titleHeight', 'titleTop',
-    'subTitleTop', 'logoWidth', 'logoHeight', 'backgroundImageAlpha', 'compressionLevel', 'quality',
-    'version', 'degreeRotation']
+  var NUMBER_TYPE_OPTIONS = ['width', 'height', 'dotScale', 'quietZone', 'logoWidth', 'logoHeight',
+    'backgroundImageAlpha', 'compressionLevel', 'quality', 'version', 'degreeRotation']
 
   // Overwrites options
   if (vOption) {
@@ -1864,8 +1830,6 @@ function QRCode(vOption) {
     console.warn("Alignment style '" + this._htOption.alignmentStyle + "' is invalidate, reset to 'rectangle'")
     this._htOption.alignmentStyle = 'rectangle';
   }
-
-  this._htOption.height = this._htOption.height + this._htOption.titleHeight;
 
   this._oQRCode = null;
   this._oQRCode = new QRCodeModel(_getTypeNumber(this._htOption.text, this._htOption), this._htOption.correctLevel);

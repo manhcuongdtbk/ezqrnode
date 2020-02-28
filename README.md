@@ -1,6 +1,6 @@
 # EzQRNode
 
-EzQRNode is a NodeJS server side QRCode image generator. Support setting Dot style, Logo, Background image, Colorful, Title and more.
+EzQRNode is a NodeJS server side QRCode image generator. Support setting Dot style, Timing Style, Position Style, Alignment Style, Logo, Background image, Colorful and more.
 
 ## Feature
 
@@ -14,7 +14,6 @@ EzQRNode is a NodeJS server side QRCode image generator. Support setting Dot sty
 - Support custom Timing Patterns vertical, horizontal color and scale
 - Support Logo images (including transparent PNG images)
 - Support Background Image
-- Support for title, subtitle settings
 - Support QR Code rotation
 
 ## Basic Usages
@@ -102,24 +101,6 @@ var qrcode = new QRCode(options);
       timing: '#e1622f', // Global Timing color. if not set, the defaut is `colorDark`
       timing_H: '', // Horizontal timing color
       timing_V: '', // Vertical timing color
-      */
-
-      // ====== Title
-      /*
-      title: 'QR Title', // content
-      titleFont: "bold 18px Arial", //font. default is "bold 16px Arial"
-      titleColor: "#004284", // color. default is "#000"
-      titleBackgroundColor: "#fff", // background color. default is "#fff"
-      titleHeight: 70, // height, including subTitle. default is 0
-      titleTop: 25, // draws y coordinates. default is 30
-      */
-
-      // ====== SubTitle
-      /*
-      subTitle: 'QR subTitle', // content
-      subTitleFont: "14px Arial", // font. default is "14px Arial"
-      subTitleColor: "#004284", // color. default is "4F4F4F"
-      subTitleTop: 40, // draws y coordinates. default is 0
       */
 
       // ===== Event Handler
@@ -213,18 +194,6 @@ var qrcode = new QRCode(options);
   | **timing** | N | String | `undefined` | Global Timing CSS color. if not set, the defaut is `colorDark` |
   | **timing_H** | N | String | `undefined` | Horizontal timing CSS color |
   | **timing_V** | N | String | `undefined` | Vertical timing CSS color |
-  | Title options| --- | ---|---|---|
-  | **title** | N | String | `''` |  |
-  | **titleFont** | N | String | `bold 16px Arial` | CSS Font |
-  | **titleColor** | N | String | `#000000` | CSS color |
-  | **titleBackgroundColor** | N | String | `#ffffff` | CSS color|
-  | **titleHeight** | N | Number | `0` | Title Height, Include subTitle |
-  | **titleTop** | N | Number | `30` | draws y coordinates.|
-  | SubTitle options| --- | ---|---|---|
-  | **subTitle** | N | String | `''` |  |
-  | **subTitleFont** | N | String | `14px Arial` | CSS Font |
-  | **subTitleColor** | N | String | `#4F4F4F` | CSS color |
-  | **subTitleTop** | N | Number | `0` | draws y coordinates. default is 0|
   | Event Handler options| --- | ---|---|---|
   | **onRenderingStart(qrCodeOptions)** | N | Function | `undefined` | Callback function when rendering start work. can use to hide loading state or handling.  |
   | Images format options| --- | ---|---|---|

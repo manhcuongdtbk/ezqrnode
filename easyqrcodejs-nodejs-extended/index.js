@@ -1212,11 +1212,15 @@ Drawing.prototype.draw = function (oQRCode) {
   var nCount = oQRCode.getModuleCount();
   var nWidth = Math.round(_htOption.width / nCount);
   var nHeight = Math.round(_htOption.height / nCount);
-  _htOption.quietZone = Math.round(_htOption.quietZone);
+
+  if (_htOption.quietZoneSizeUnit === 'module') {
+    _htOption.quietZoneSize = nWidth * _htOption.quietZoneSize
+  }
+
   this._htOption.width = nWidth * nCount;
   this._htOption.height = nHeight * nCount;
-  this._canvas.width = this._htOption.width + this._htOption.quietZone * 2;
-  this._canvas.height = this._htOption.height + this._htOption.quietZone * 2;
+  this._canvas.width = this._htOption.width + this._htOption.quietZoneSize * 2;
+  this._canvas.height = this._htOption.height + this._htOption.quietZoneSize * 2;
 
   var autoColorDark="rgba(0, 0, 0, .6)";
   var autoColorLight="rgba(255, 255, 255, .7)";
@@ -1244,13 +1248,27 @@ Drawing.prototype.draw = function (oQRCode) {
     _oContext.fillStyle =  _htOption.quietZoneColor;
 
     // top
-    _oContext.fillRect(0, 0, t._canvas.width, _htOption.quietZone);
+    _oContext.fillRect(0, 0, t._canvas.width, _htOption.quietZoneSize);
     // left
-      _oContext.fillRect(0, _htOption.quietZone, _htOption.quietZone, t._canvas.height-_htOption.quietZone*2);
+      _oContext.fillRect(
+        0,
+        _htOption.quietZoneSize,
+        _htOption.quietZoneSize,
+        t._canvas.height - _htOption.quietZoneSize * 2);
     // right
-      _oContext.fillRect(t._canvas.width-_htOption.quietZone,  _htOption.quietZone, _htOption.quietZone, t._canvas.height-_htOption.quietZone*2);
+      _oContext.fillRect(
+        t._canvas.width - _htOption.quietZoneSize,
+        _htOption.quietZoneSize,
+        _htOption.quietZoneSize,
+        t._canvas.height - _htOption.quietZoneSize * 2
+      );
     // bottom
-      _oContext.fillRect(0, t._canvas.height-_htOption.quietZone, t._canvas.width, _htOption.quietZone);
+      _oContext.fillRect(
+        0,
+        t._canvas.height - _htOption.quietZoneSize,
+        t._canvas.width,
+        _htOption.quietZoneSize
+      );
   }
 
   if (_htOption.backgroundImage) {
@@ -1260,8 +1278,13 @@ Drawing.prototype.draw = function (oQRCode) {
     bgImg.onload = function () {
       _oContext.globalAlpha = 1;
       _oContext.globalAlpha = _htOption.backgroundImageAlpha;
-      _oContext.drawImage(bgImg, 0, 0, _htOption.width + _htOption.quietZone * 2, _htOption.height +
-        _htOption.quietZone * 2);
+      _oContext.drawImage(
+        bgImg,
+        0,
+        0,
+        _htOption.width + _htOption.quietZoneSize * 2,
+        _htOption.height + _htOption.quietZoneSize * 2
+      );
       _oContext.globalAlpha = 1;
 
       drawQrcode.call(t, oQRCode);
@@ -1282,8 +1305,8 @@ Drawing.prototype.draw = function (oQRCode) {
   function drawQrcode(oQRCode) {
     for (var row = 0; row < nCount; row++) {
       for (var col = 0; col < nCount; col++) {
-        var nLeft = col * nWidth + _htOption.quietZone;
-        var nTop = row * nHeight + _htOption.quietZone;
+        var nLeft = col * nWidth + _htOption.quietZoneSize;
+        var nTop = row * nHeight + _htOption.quietZoneSize;
         var bIsDark = oQRCode.isDark(row, col);
         var eye = oQRCode.getEye(row, col); // { isDark: true/false, type: PO_TL, PI_TL, PO_TR, PI_TR, PO_BL, PI_BL };
         var positionOuterDarkWidth = nWidth * 7 // width of one module * position outer dark module quantity
@@ -1574,17 +1597,26 @@ Drawing.prototype.draw = function (oQRCode) {
           //}
           _oContext.fillStyle = _htOption.logoBackgroundColor;
 
-          _oContext.fillRect((_htOption.width + _htOption.quietZone * 2 - imgW) / 2, (_htOption.height +
-            _htOption.quietZone * 2 - imgH) / 2, imgW, imgW);
+          _oContext.fillRect(
+            (_htOption.width + _htOption.quietZoneSize * 2 - imgW) / 2,
+            (_htOption.height + _htOption.quietZoneSize * 2 - imgH) / 2,
+            imgW,
+            imgW
+          );
         }
 
-        _oContext.drawImage(img, (_htOption.width + _htOption.quietZone * 2 - imgW) / 2, (_htOption.height +
-          _htOption.quietZone * 2 - imgH) / 2, imgW, imgH);
+        _oContext.drawImage(
+          img,
+          (_htOption.width + _htOption.quietZoneSize * 2 - imgW) / 2,
+          (_htOption.height + _htOption.quietZoneSize * 2 - imgH) / 2,
+          imgW,
+          imgH
+        );
 
         _this._bIsPainted = true;
 
-        if(_htOption.quietZone>0 && _htOption.quietZoneColor){
-            drawQuietZoneColor();
+        if (_htOption.quietZoneSize > 0 && _htOption.quietZoneColor) {
+          drawQuietZoneColor();
         }
 
         _this.makeImage();
@@ -1607,8 +1639,8 @@ Drawing.prototype.draw = function (oQRCode) {
     } else {
       this._bIsPainted = true;
 
-      if(_htOption.quietZone>0 && _htOption.quietZoneColor){
-          drawQuietZoneColor();
+      if (_htOption.quietZoneSize > 0 && _htOption.quietZoneColor) {
+        drawQuietZoneColor();
       }
 
       this.makeImage();
@@ -1696,7 +1728,8 @@ function QRCode(vOption) {
 
     dotScale: 1, // Must be greater than 0, less than or equal to 1. default is 1
 
-    quietZone: 0,
+    quietZoneSize: 0, // Must be greater than or equal to 0. default is 0
+    quietZoneSizeUnit: 'pixel', // 'pixel', 'module'
     quietZoneColor: 'transparent',
 
     logo: undefined,
@@ -1762,7 +1795,7 @@ function QRCode(vOption) {
     };
   }
 
-  var NUMBER_TYPE_OPTIONS = ['width', 'height', 'dotScale', 'quietZone', 'logoWidth', 'logoHeight',
+  var NUMBER_TYPE_OPTIONS = ['width', 'height', 'dotScale', 'quietZoneSize', 'logoWidth', 'logoHeight',
     'backgroundImageAlpha', 'compressionLevel', 'quality', 'version', 'degreeRotation']
 
   // Overwrites options
@@ -1800,14 +1833,26 @@ function QRCode(vOption) {
   }
 
   if (this._htOption.dotScale < 0 || this._htOption.dotScale > 1) {
-    console.warn(this._htOption.dotScale +
-      " , is invalidate, dotScale must greater than 0, less than or equal to 1, now reset to 1. ")
+    console.warn(`${this._htOption.dotScale} is invalidate, dotScale must greater than 0, less than
+      or equal to 1, now reset to 1.`)
     this._htOption.dotScale = 1;
+  }
+
+  if (this._htOption.quietZoneSize < 0) {
+    console.warn(`${this._htOption.quietZoneSize} is invalidate, quietZoneSize must greater than or
+      equal to 0, now reset to 0.`);
+    this._htOption.quietZoneSize = 0;
+  }
+
+  if (this._htOption.quietZoneSizeUnit !== 'pixel' && this._htOption.quietZoneSizeUnit !== 'module') {
+    console.warn(`Quiet zone size unit '${this._htOption.quietZoneSizeUnit}' is invalidate, reset to
+      'pixel'`);
+    this._htOption.quietZoneSizeUnit = 'pixel';
   }
 
   if (this._htOption.backgroundImageAlpha < 0 || this._htOption.backgroundImageAlpha > 1) {
     console.warn(this._htOption.backgroundImageAlpha +
-      " , is invalidate, backgroundImageAlpha must between 0 and 1, now reset to 1. ")
+      " is invalidate, backgroundImageAlpha must between 0 and 1, now reset to 1. ")
     this._htOption.backgroundImageAlpha = 1;
   }
 
@@ -1817,7 +1862,7 @@ function QRCode(vOption) {
   }
 
   if (this._htOption.timingStyle !== 'rectangle' && this._htOption.timingStyle !== 'roundedRectangle' && this._htOption.timingStyle !== 'circle' && this._htOption.timingStyle !== 'star') {
-    console.warn("Dot style '" + this._htOption.timingStyle + "' is invalidate, reset to 'rectangle'")
+    console.warn("Timing style '" + this._htOption.timingStyle + "' is invalidate, reset to 'rectangle'")
     this._htOption.timingStyle = 'rectangle';
   }
 

@@ -27,6 +27,8 @@ const options = {
   // PI_TR: 'blue',
   // PO_BL: 'cyan',
   // PI_BL: 'orange',
+  // quietZoneSize: 100,
+  // quietZoneSizeUnit: 'module',
   token: 'b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b',
 };
 

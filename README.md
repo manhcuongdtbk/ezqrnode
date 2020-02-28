@@ -160,7 +160,8 @@ var qrcode = new QRCode(options);
   | **dotScale** | N | Number | `1.0` |Dot style required Patterns. Ranges: `0-1.0` |
   | **dotStyle** | N | String | `rectangle` | `rectangle`<br/>`roundedRectangle`<br/>`circle` |
     | Quiet Zone| --- | ---|---|---|
-    | **quietZone** | N | Number | `0` |  Quiet Zone size |
+    | **quietZoneSize** | N | Number | `0` |  Quiet Zone size |
+    | **quietZoneSizeUnit** | N | String | `pixel` |  Quiet Zone size unit<br/>`pixel`<br/>`module` |
     | **quietZoneColor** | N | String | `transparent` |  Background CSS color to Quiet Zone |
   | Logo options| --- | ---|---|---|
   | **logo** | N | String | `undefined` | Logo Image Path. If use relative address, relative to `easy.qrcode.min.js` |

@@ -55,96 +55,6 @@ var qrcode = new QRCode(options);
       colorLight : "#ffffff",
       correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
       dotScale: 1 // Must be greater than 0, less than or equal to 1. default is 1
-
-      // ====== Quiet Zone
-      /*
-      quietZone: 0,
-      quietZoneColor: 'transparent',
-      */
-
-      // ====== Logo
-      /*
-      logo:"../demo/logo.png", // Relative address, relative to `easy.qrcode.min.js`
-      logo:"http://127.0.0.1:8020/easy-qrcodejs/demo/logo.png",
-      logoWidth:80, // widht. default is automatic width
-      logoHeight:80 // height. default is automatic height
-      logoBackgroundColor:'#fffff', // Logo backgroud color, Invalid when `logBgTransparent` is true; default is '#ffffff'
-      logoBackgroundTransparent:false, // Whether use transparent image, default is false
-      */
-
-      // ====== Backgroud Image
-      /*
-      backgroundImage: '', // Background Image
-      backgroundImageAlpha: 1, // Background image transparency, value between 0 and 1. default is 1.
-      autoColor: false,
-      */
-
-      // ====== Colorful
-      // === Posotion Pattern(Eye) Color
-      /*
-      PO: '#e1622f', // Global Posotion Outer color. if not set, the defaut is `colorDark`
-      PI: '#aa5b71', // Global Posotion Inner color. if not set, the defaut is `colorDark`
-      PO_TL:'', // Posotion Outer color - Top Left
-      PI_TL:'', // Posotion Inner color - Top Left
-      PO_TR:'', // Posotion Outer color - Top Right
-      PI_TR:'', // Posotion Inner color - Top Right
-      PO_BL:'', // Posotion Outer color - Bottom Left
-      PI_BL:'', // Posotion Inner color - Bottom Left
-      */
-      // === Alignment Color
-      /*
-      AO: '', // Alignment Outer. if not set, the defaut is `colorDark`
-      AI: '', // Alignment Inner. if not set, the defaut is `colorDark`
-      */
-      // === Timing Pattern Color
-      /*
-      timing: '#e1622f', // Global Timing color. if not set, the defaut is `colorDark`
-      timing_H: '', // Horizontal timing color
-      timing_V: '', // Vertical timing color
-      */
-
-      // ===== Event Handler
-      /*
-      onRenderingStart: undefined,
-      */
-
-      // ==== Images format
-      /*
-      format: 'PNG', // 'PNG', 'JPG'
-      compressionLevel: 6, // ZLIB compression level (0-9). default is 6
-      quality: 0.75, // An object specifying the quality (0 to 1). default is 0.75. (JPGs only)
-      */
-
-      // ==== Versions
-      /*
-      version: 0 // The symbol versions of QR Code range from Version 1 to Version 40. default 0 means automatically choose the closest version based on the text length.
-
-      */
-
-      // ==== Dot Style
-      /*
-      dotStyle: 'rectangle' // A string represents dot style. default is 'rectangle'.
-      */
-
-     // ==== Timing style
-     /*
-     timingStyle: 'rectangle', // A string represents timing style. default is 'rectangle'
-     */
-
-    // ==== Position style
-    /*
-    positionStyle: 'rectangle', // A string represents position style. default is 'rectangle'
-    */
-
-    // ==== Alignment style
-    /*
-    alignmentStyle: 'rectangle', // 'A string represents alignment style. default is 'rectangle'
-    */
-
-    // ==== Degree Rotation
-    /*
-    degreeRotation: 0, // An integer number represents dot style. default is 0
-    */
   }
   ```
 
@@ -156,6 +66,7 @@ var qrcode = new QRCode(options);
   | **height** | N | Number | `256` |  Height |
   | **colorDark** | N | String | `#000000` | Dark CSS color |
   | **colorLight** | N | String | `#ffffff` | Light CSS color |
+  | **backgroundColor** | N | String | `null` | Background CSS color |
   | **correctLevel** | N | Enum | `QRCode.CorrectLevel.H` | `QRCode.CorrectLevel.H`<br/>`QRCode.CorrectLevel.Q` <br/> `QRCode.CorrectLevel.M` <br/> `QRCode.CorrectLevel.L`|
   | **dotScale** | N | Number | `1.0` |Dot style required Patterns. Ranges: `0-1.0` |
   | **dotStyle** | N | String | `rectangle` | `rectangle`<br/>`roundedRectangle`<br/>`circle` |

@@ -1299,7 +1299,17 @@ Drawing.prototype.draw = function (oQRCode) {
     _oContext.translate(canvasXCenter, canvasYCenter);
     _oContext.rotate(Math.PI / 180 * _htOption.degreeRotation);
     _oContext.translate(-canvasXCenter, -canvasYCenter);
+
+    if (_htOption.backgroundColor) {
+      fillBackgroundColor(_htOption.backgroundColor);
+    }
+
     drawQrcode.call(t, oQRCode);
+  }
+
+  function fillBackgroundColor(backgroundColor) {
+    _oContext.fillStyle = backgroundColor;
+    _oContext.fillRect(_htOption.quietZoneSize, _htOption.quietZoneSize, _htOption.width, _htOption.height);
   }
 
   function drawQrcode(oQRCode) {
@@ -1361,8 +1371,16 @@ Drawing.prototype.draw = function (oQRCode) {
               _oContext.strokeStyle = POD_color;
               _oContext.fillStyle = POD_color;
               _oContext.fillRect(current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight);
+
               // Clear unnecessary fill part inside the rectangle
-              _oContext.clearRect(PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight)
+              if (_htOption.backgroundColor) {
+                _oContext.fillStyle = _htOption.backgroundColor
+                _oContext.strokeStyle = _oContext.fillStyle
+                _oContext.fillRect(PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight)
+              } else {
+                _oContext.clearRect(PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight)
+              }
+
               // Draw fill rectangle for the inner position
               _oContext.strokeStyle = PID_color;
               _oContext.fillStyle = PID_color;
@@ -1373,8 +1391,16 @@ Drawing.prototype.draw = function (oQRCode) {
               _oContext.strokeStyle = POD_color;
               _oContext.fillStyle = POD_color;
               fillRoundedRect(_oContext, current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth, positionOuterDarkHeight, 30)
+
               // Clear unnecessary fill part inside the rounded rectangle
-              clearRoundedRect(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight, 30)
+              if (_htOption.backgroundColor) {
+                _oContext.fillStyle = _htOption.backgroundColor
+                _oContext.strokeStyle = _oContext.fillStyle
+                fillRoundedRect(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight, 30)
+              } else {
+                clearRoundedRect(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth, positionInnerLightHeight, 30)
+              }
+
               // Draw fill rounded rectangle for the inner position
               _oContext.strokeStyle = PID_color;
               _oContext.fillStyle = PID_color;
@@ -1385,8 +1411,16 @@ Drawing.prototype.draw = function (oQRCode) {
               _oContext.strokeStyle = POD_color;
               _oContext.fillStyle = POD_color;
               fillCircle(_oContext, current_POD_TLC[0], current_POD_TLC[1], positionOuterDarkWidth);
+
               // Clear unnecessary fill part inside the circle
-              clearCircle(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth)
+              if (_htOption.backgroundColor) {
+                _oContext.fillStyle = _htOption.backgroundColor
+                _oContext.strokeStyle = _oContext.fillStyle
+                fillCircle(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth)
+              } else {
+                clearCircle(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth)
+              }
+
               // Draw circle for the inner position
               _oContext.strokeStyle = PID_color;
               _oContext.fillStyle = PID_color;
@@ -1429,8 +1463,16 @@ Drawing.prototype.draw = function (oQRCode) {
                     _oContext.strokeStyle = AOD_color;
                     _oContext.fillStyle = AOD_color;
                     _oContext.fillRect(current_AOD_TLC[0], current_AOD_TLC[1], alignmentOuterDarkWidth, alignmentOuterDarkHeight);
+
                     // Clear unnecessary fill part inside the rectangle
-                    _oContext.clearRect(AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight)
+                    if (_htOption.backgroundColor) {
+                      _oContext.fillStyle = _htOption.backgroundColor;
+                      _oContext.strokeStyle = _oContext.fillStyle;
+                      _oContext.fillRect(AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight);
+                    } else {
+                      _oContext.clearRect(AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight);
+                    }
+
                     // Draw fill rectangle for the inner position
                     _oContext.strokeStyle = AID_color;
                     _oContext.fillStyle = AID_color;
@@ -1441,8 +1483,16 @@ Drawing.prototype.draw = function (oQRCode) {
                     _oContext.strokeStyle = AOD_color;
                     _oContext.fillStyle = AOD_color;
                     fillRoundedRect(_oContext, current_AOD_TLC[0], current_AOD_TLC[1], alignmentOuterDarkWidth, alignmentOuterDarkHeight, 30)
+
                     // Clear unnecessary fill part inside the rounded rectangle
-                    clearRoundedRect(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight, 30)
+                    if (_htOption.backgroundColor) {
+                      _oContext.fillStyle = _htOption.backgroundColor;
+                      _oContext.strokeStyle = _oContext.fillStyle;
+                      fillRoundedRect(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight, 30);
+                    } else {
+                      clearRoundedRect(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth, alignmentInnerLightHeight, 30)
+                    }
+
                     // Draw fill rounded rectangle for the inner position
                     _oContext.strokeStyle = AID_color;
                     _oContext.fillStyle = AID_color;
@@ -1453,8 +1503,16 @@ Drawing.prototype.draw = function (oQRCode) {
                     _oContext.strokeStyle = AOD_color;
                     _oContext.fillStyle = AOD_color;
                     fillCircle(_oContext, current_AOD_TLC[0], current_AOD_TLC[1], alignmentOuterDarkWidth)
+
                     // Clear unnecessary fill part inside the circle
-                    clearCircle(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth)
+                    if (_htOption.backgroundColor) {
+                      _oContext.fillStyle = _htOption.backgroundColor;
+                      _oContext.strokeStyle = _oContext.fillStyle;
+                      fillCircle(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth);
+                    } else {
+                      clearCircle(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth)
+                    }
+
                     // Draw fill circle for the inner position
                     _oContext.strokeStyle = AID_color;
                     _oContext.fillStyle = AID_color;
@@ -1724,6 +1782,7 @@ function QRCode(vOption) {
     typeNumber: 4,
     colorDark: 'rgba(0, 0, 0, 0.6)',
     colorLight: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: null, // CSS color of the QR Code module's background, default to null (transparent)
     correctLevel: QRCode.CorrectLevel.M,
 
     dotScale: 1, // Must be greater than 0, less than or equal to 1. default is 1
@@ -1810,19 +1869,19 @@ function QRCode(vOption) {
     }
   }
 
-  if(this._htOption.version<0 || this._htOption.version>40){
+  if (this._htOption.version < 0 || this._htOption.version > 40) {
       console.warn("QR Code version '"+this._htOption.version+"' is invalidate, reset to 0")
-      this._htOption.version=0;
+      this._htOption.version = 0;
   }
 
   this._htOption.format=this._htOption.format.toUpperCase();
 
-  if(this._htOption.format!='PNG' && this._htOption.format!='JPG'){
+  if (this._htOption.format != 'PNG' && this._htOption.format != 'JPG'){
       console.warn("Image format '"+this._htOption.format+"' is invalidate, reset to 'PNG'")
       this._htOption.format='PNG';
   }
 
-  if (this._htOption.format=='PNG' && (this._htOption.compressionLevel < 0 || this._htOption.compressionLevel > 9)) {
+  if (this._htOption.format == 'PNG' && (this._htOption.compressionLevel < 0 || this._htOption.compressionLevel > 9)) {
     console.warn(this._htOption.compressionLevel +
       " is invalidate, PNG compressionLevel must between 0 and 9, now reset to 0. ")
     this._htOption.compressionLevel = 0;

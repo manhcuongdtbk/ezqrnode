@@ -13,8 +13,8 @@ const options = {
   height: '1000',
   dotStyle: 'roundedRectangle',
   timingStyle: 'roundedRectangle',
-  // positionStyle: 'roundedRectangle',
-  // alignmentStyle: 'roundedRectangle',
+  positionStyle: 'circle',
+  alignmentStyle: 'circle',
   // AO: 'purple',
   // AI: 'brown',
   // version: '7',
@@ -29,6 +29,7 @@ const options = {
   // PI_BL: 'orange',
   // quietZoneSize: 100,
   // quietZoneSizeUnit: 'module',
+  backgroundColor: 'yellow',
   token: 'b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b',
 };
 

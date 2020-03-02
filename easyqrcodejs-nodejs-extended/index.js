@@ -1,5 +1,6 @@
 var { createCanvas, loadImage, Image } = require("canvas");
 const fs = require("fs");
+const constants = require("./core/constants");
 // Custom dot styles
 const fillRoundedRect = require("./styles/rounded-rectangle");
 const fillCircle = require("./styles/circle");
@@ -8,7 +9,7 @@ const clearRoundedRect = require("./styles/clear-rounded-rectangle");
 const clearCircle = require("./styles/clear-circle");
 
 function QR8bitByte(data) {
-  this.mode = QRMode.MODE_8BIT_BYTE;
+  this.mode = constants.QRMode.MODE_8BIT_BYTE;
   this.data = data;
   this.parsedData = [];
 
@@ -471,31 +472,6 @@ QRCodeModel.createBytes = function(buffer, rsBlocks) {
   return data;
 };
 
-var QRMode = {
-  MODE_NUMBER: 1 << 0,
-  MODE_ALPHA_NUM: 1 << 1,
-  MODE_8BIT_BYTE: 1 << 2,
-  MODE_KANJI: 1 << 3
-};
-
-var QRErrorCorrectLevel = {
-  L: 1,
-  M: 0,
-  Q: 3,
-  H: 2
-};
-
-var QRMaskPattern = {
-  PATTERN000: 0,
-  PATTERN001: 1,
-  PATTERN010: 2,
-  PATTERN011: 3,
-  PATTERN100: 4,
-  PATTERN101: 5,
-  PATTERN110: 6,
-  PATTERN111: 7
-};
-
 var QRUtil = {
   PATTERN_POSITION_TABLE: [
     [],
@@ -575,24 +551,24 @@ var QRUtil = {
   },
   getMask(maskPattern, i, j) {
     switch (maskPattern) {
-      case QRMaskPattern.PATTERN000:
+      case constants.QRMaskPattern.PATTERN000:
         return (i + j) % 2 == 0;
-      case QRMaskPattern.PATTERN001:
+      case constants.QRMaskPattern.PATTERN001:
         return i % 2 == 0;
-      case QRMaskPattern.PATTERN010:
+      case constants.QRMaskPattern.PATTERN010:
         return j % 3 == 0;
-      case QRMaskPattern.PATTERN011:
+      case constants.QRMaskPattern.PATTERN011:
         return (i + j) % 3 == 0;
-      case QRMaskPattern.PATTERN100:
+      case constants.QRMaskPattern.PATTERN100:
         return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 == 0;
-      case QRMaskPattern.PATTERN101:
+      case constants.QRMaskPattern.PATTERN101:
         return (i * j) % 2 + (i * j) % 3 == 0;
-      case QRMaskPattern.PATTERN110:
+      case constants.QRMaskPattern.PATTERN110:
         return ((i * j) % 2 + (i * j) % 3) % 2 == 0;
-      case QRMaskPattern.PATTERN111:
+      case constants.QRMaskPattern.PATTERN111:
         return ((i * j) % 3 + (i + j) % 2) % 2 == 0;
       default:
-        throw new Error("bad maskPattern:" + maskPattern);
+        throw new Error(`bad maskPattern:${maskPattern}`);
     }
   },
   getErrorCorrectPolynomial(errorCorrectLength) {
@@ -607,45 +583,45 @@ var QRUtil = {
   getLengthInBits(mode, type) {
     if (1 <= type && type < 10) {
       switch (mode) {
-        case QRMode.MODE_NUMBER:
+        case constants.QRMode.MODE_NUMBER:
           return 10;
-        case QRMode.MODE_ALPHA_NUM:
+        case constants.QRMode.MODE_ALPHA_NUM:
           return 9;
-        case QRMode.MODE_8BIT_BYTE:
+        case constants.QRMode.MODE_8BIT_BYTE:
           return 8;
-        case QRMode.MODE_KANJI:
+        case constants.QRMode.MODE_KANJI:
           return 8;
         default:
-          throw new Error("mode:" + mode);
+          throw new Error(`mode:${mode}`);
       }
     } else if (type < 27) {
       switch (mode) {
-        case QRMode.MODE_NUMBER:
+        case constants.QRMode.MODE_NUMBER:
           return 12;
-        case QRMode.MODE_ALPHA_NUM:
+        case constants.QRMode.MODE_ALPHA_NUM:
           return 11;
-        case QRMode.MODE_8BIT_BYTE:
+        case constants.QRMode.MODE_8BIT_BYTE:
           return 16;
-        case QRMode.MODE_KANJI:
+        case constants.QRMode.MODE_KANJI:
           return 10;
         default:
-          throw new Error("mode:" + mode);
+          throw new Error(`mode:${mode}`);
       }
     } else if (type < 41) {
       switch (mode) {
-        case QRMode.MODE_NUMBER:
+        case constants.QRMode.MODE_NUMBER:
           return 14;
-        case QRMode.MODE_ALPHA_NUM:
+        case constants.QRMode.MODE_ALPHA_NUM:
           return 13;
-        case QRMode.MODE_8BIT_BYTE:
+        case constants.QRMode.MODE_8BIT_BYTE:
           return 16;
-        case QRMode.MODE_KANJI:
+        case constants.QRMode.MODE_KANJI:
           return 12;
         default:
-          throw new Error("mode:" + mode);
+          throw new Error(`mode:${mode}`);
       }
     } else {
-      throw new Error("type:" + type);
+      throw new Error(`type:${type}`);
     }
   },
   getLostPoint(qrCode) {
@@ -672,7 +648,7 @@ var QRUtil = {
             }
 
             if (dark == qrCode.isDark(row + r, col + c)) {
-              sameCount++;
+              sameCount += 1;
             }
           }
         }
@@ -754,7 +730,7 @@ var QRUtil = {
 var QRMath = {
   glog(n) {
     if (n < 1) {
-      throw new Error("glog(" + n + ")");
+      throw new Error(`glog(${n})`);
     }
 
     return QRMath.LOG_TABLE[n];
@@ -1041,13 +1017,13 @@ QRRSBlock.getRSBlocks = function (typeNumber, errorCorrectLevel) {
 
 QRRSBlock.getRsBlockTable = function (typeNumber, errorCorrectLevel) {
   switch (errorCorrectLevel) {
-    case QRErrorCorrectLevel.L:
+    case constants.QRErrorCorrectLevel.L:
       return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-    case QRErrorCorrectLevel.M:
+    case constants.QRErrorCorrectLevel.M:
       return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-    case QRErrorCorrectLevel.Q:
+    case constants.QRErrorCorrectLevel.Q:
       return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-    case QRErrorCorrectLevel.H:
+    case constants.QRErrorCorrectLevel.H:
       return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
     default:
       return undefined;
@@ -1088,49 +1064,6 @@ QRBitBuffer.prototype = {
   }
 };
 
-var QRCodeLimitLength = [
-  [17, 14, 11, 7],
-  [32, 26, 20, 14],
-  [53, 42, 32, 24],
-  [78, 62, 46, 34],
-  [106, 84, 60, 44],
-  [134, 106, 74, 58],
-  [154, 122, 86, 64],
-  [192, 152, 108, 84],
-  [230, 180, 130, 98],
-  [271, 213, 151, 119],
-  [321, 251, 177, 137],
-  [367, 287, 203, 155],
-  [425, 331, 241, 177],
-  [458, 362, 258, 194],
-  [520, 412, 292, 220],
-  [586, 450, 322, 250],
-  [644, 504, 364, 280],
-  [718, 560, 394, 310],
-  [792, 624, 442, 338],
-  [858, 666, 482, 382],
-  [929, 711, 509, 403],
-  [1003, 779, 565, 439],
-  [1091, 857, 611, 461],
-  [1171, 911, 661, 511],
-  [1273, 997, 715, 535],
-  [1367, 1059, 751, 593],
-  [1465, 1125, 805, 625],
-  [1528, 1190, 868, 658],
-  [1628, 1264, 908, 698],
-  [1732, 1370, 982, 742],
-  [1840, 1452, 1030, 790],
-  [1952, 1538, 1112, 842],
-  [2068, 1628, 1168, 898],
-  [2188, 1722, 1228, 958],
-  [2303, 1809, 1283, 983],
-  [2431, 1911, 1351, 1051],
-  [2563, 1989, 1423, 1093],
-  [2699, 2099, 1499, 1139],
-  [2809, 2213, 1579, 1219],
-  [2953, 2331, 1663, 1273]
-];
-
 /**
  * Get the type by string length
  *
@@ -1144,43 +1077,43 @@ function _getTypeNumber(sText, _htOption) {
   var nType = 1;
   var length = _getUTF8Length(sText);
 
-  for (var i = 0, len = QRCodeLimitLength.length; i <= len; i += 1) {
+  for (var i = 0, len = constants.QRCodeLimitLength.length; i <= len; i += 1) {
     var nLimit = 0;
 
     switch (nCorrectLevel) {
-      case QRErrorCorrectLevel.L:
-        nLimit = QRCodeLimitLength[i][0];
+      case constants.QRErrorCorrectLevel.L:
+        nLimit = constants.QRCodeLimitLength[i][0];
         break;
-      case QRErrorCorrectLevel.M:
-        nLimit = QRCodeLimitLength[i][1];
+      case constants.QRErrorCorrectLevel.M:
+        nLimit = constants.QRCodeLimitLength[i][1];
         break;
-      case QRErrorCorrectLevel.Q:
-        nLimit = QRCodeLimitLength[i][2];
+      case constants.QRErrorCorrectLevel.Q:
+        nLimit = constants.QRCodeLimitLength[i][2];
         break;
-      case QRErrorCorrectLevel.H:
-        nLimit = QRCodeLimitLength[i][3];
+      case constants.QRErrorCorrectLevel.H:
+        nLimit = constants.QRCodeLimitLength[i][3];
         break;
     }
 
     if (length <= nLimit) {
       break;
     } else {
-      nType++;
+      nType += 1;
     }
   }
 
-  if (nType > QRCodeLimitLength.length) {
+  if (nType > constants.QRCodeLimitLength.length) {
     throw new Error("Too long data");
   }
 
-  if(_htOption.version!=0){
-      if(nType<=_htOption.version){
-          nType=_htOption.version;
-          _htOption.runVersion = nType;
-      } else{
-          console.warn(`QR Code version ${_htOption.version} too small, run version use ${nType}`);
-          _htOption.runVersion = nType;
-      }
+  if(_htOption.version != 0){
+    if (nType <= _htOption.version) {
+      nType = _htOption.version;
+      _htOption.runVersion = nType;
+    } else {
+      console.warn(`QR Code version ${_htOption.version} too small, run version use ${nType}`);
+      _htOption.runVersion = nType;
+    }
   }
 
   return nType;
@@ -1237,7 +1170,7 @@ Drawing.prototype.draw = function (oQRCode) {
   var autoColorLight = "rgba(255, 255, 255, .7)";
 
   // JPG
-  if (_htOption.format == "JPG") {
+  if (_htOption.format === "JPG") {
     if (_htOption.quietZoneColor == "transparent") {
       _htOption.quietZoneColor = "#ffffff";
     }
@@ -1357,18 +1290,18 @@ Drawing.prototype.draw = function (oQRCode) {
         // Position inner dark color
         var PID_color = null
 
-        if (row == POD_TL_TLC[0] && col == POD_TL_TLC[1]) {
+        if (row === POD_TL_TLC[0] && col === POD_TL_TLC[1]) {
           isPOD_TL = true
-          POD_color = _htOption['PO_TL'] || _htOption['PO'] || _htOption.colorDark;
-          PID_color = _htOption['PI_TL'] || _htOption['PI'] || _htOption.colorDark;
+          POD_color = _htOption.PO_TL || _htOption.PO || _htOption.colorDark;
+          PID_color = _htOption.PI_TL || _htOption.PI || _htOption.colorDark;
         } else if (row == POD_TR_TLC[0] && col == POD_TR_TLC[1]) {
-          isPOD_TR = true
-          POD_color = _htOption['PO_TR'] || _htOption['PO'] || _htOption.colorDark;
-          PID_color = _htOption['PI_TR'] || _htOption['PI'] || _htOption.colorDark;
+          isPOD_TR = true;
+          POD_color = _htOption.PO_TR || _htOption.PO || _htOption.colorDark;
+          PID_color = _htOption.PI_TR || _htOption.PI || _htOption.colorDark;
         } else if (row == POD_BL_TLC[0] && col == POD_BL_TLC[1]) {
-          isPOD_BL = true
-          POD_color = _htOption['PO_BL'] || _htOption['PO'] || _htOption.colorDark;
-          PID_color = _htOption['PI_BL'] || _htOption['PI'] || _htOption.colorDark;
+          isPOD_BL = true;
+          POD_color = _htOption.PO_BL || _htOption.PO || _htOption.colorDark;
+          PID_color = _htOption.PI_BL || _htOption.PI || _htOption.colorDark;
         }
 
         // Draw the whole position outer and inner
@@ -1858,16 +1791,12 @@ Drawing.prototype.makeImage = function () {
     }
 
     var out = fs.createWriteStream(makeOptions.path)
-    var stream=undefined;
+    var stream = undefined;
 
-    if (this._htOption.format == "PNG") {
-      stream = this._canvas.createPNGStream({
-        compressionLevel: this._htOption.compressionLevel
-      });
+    if (this._htOption.format === "PNG") {
+      stream = this._canvas.createPNGStream({ compressionLevel: this._htOption.compressionLevel });
     } else {
-      stream = this._canvas.createJPEGStream({
-        quality: this._htOption.quality
-      });
+      stream = this._canvas.createJPEGStream({ quality: this._htOption.quality });
     }
 
     stream.pipe(out);
@@ -1875,18 +1804,18 @@ Drawing.prototype.makeImage = function () {
     out.on("finish", () => {
       t.resolve({});
     });
-  } else if (makeOptions.makeType == "URL") {
+  } else if (makeOptions.makeType === "URL") {
     if (this._htOption.onRenderingStart) {
       this._htOption.onRenderingStart(this._htOption);
     }
 
-    if (this._htOption.format == "PNG") {
+    if (this._htOption.format === "PNG") {
       // dataUrl = this._canvas.toDataURL()
       this._canvas.toDataURL((err, data) => {
         t.resolve(data);
       }); // defaults to PNG
     } else{
-      this._canvas.toDataURL('image/jpeg', (err, data) => {
+      this._canvas.toDataURL("image/jpeg", (err, data) => {
         t.resolve(data);
       });
     }
@@ -2186,6 +2115,6 @@ QRCode.prototype.toDataURL = function (format) {
 /**
  * @name QRCode.CorrectLevel
  */
-QRCode.CorrectLevel = QRErrorCorrectLevel;
+QRCode.CorrectLevel = constants.QRErrorCorrectLevel;
 
 module.exports = QRCode;

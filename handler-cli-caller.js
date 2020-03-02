@@ -1,20 +1,20 @@
-const { handler } = require('./index');
-const crypto = require('crypto');
+const crypto = require("crypto");
+const { handler } = require("./index");
 
-const randomText = crypto.randomBytes(20).toString('hex');
-const fixedText = 'cuong.bui@tomosia.com';
+const randomText = crypto.randomBytes(20).toString("hex");
+const fixedText = "cuong.bui@tomosia.com";
 
 const options = {
   text: randomText,
-  dotScale: '0.5',
+  dotScale: "0.5",
   // colorDark: 'black',
   // colorLight: 'white',
-  width: '1000',
-  height: '1000',
-  dotStyle: 'roundedRectangle',
-  timingStyle: 'roundedRectangle',
-  positionStyle: 'circle',
-  alignmentStyle: 'circle',
+  width: "1000",
+  height: "1000",
+  dotStyle: "rectangle",
+  timingStyle: "rectangle",
+  positionStyle: "rectangle",
+  alignmentStyle: "rectangle",
   // AO: 'purple',
   // AI: 'brown',
   // version: '7',
@@ -27,13 +27,14 @@ const options = {
   // PI_TR: 'blue',
   // PO_BL: 'cyan',
   // PI_BL: 'orange',
-  // quietZoneSize: 100,
-  // quietZoneSizeUnit: 'module',
-  backgroundColor: 'yellow',
-  token: 'b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b',
+  quietZoneSize: 1,
+  quietZoneSizeUnit: "module",
+  quietZoneColor: "red",
+  backgroundColor: "white",
+  token: "b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b"
 };
 
-const eventEmulator = { 'queryStringParameters': options };
+const eventEmulator = { queryStringParameters: options };
 
 (async () => {
   const generatedQRCode = await handler(eventEmulator);

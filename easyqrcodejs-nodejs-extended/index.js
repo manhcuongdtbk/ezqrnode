@@ -6,6 +6,7 @@ const QRUtil = require("./core/qr-util");
 const QRMath = require("./core/qr-math");
 const QRPolynomial = require("./core/qr-polynomial");
 const QR8bitByte = require("./core/qr-8-bit-byte");
+const QRBitBuffer = require("./core/qr-bit-buffer");
 // Custom dot styles
 const fillRoundedRect = require("./styles/rounded-rectangle");
 const fillCircle = require("./styles/circle");
@@ -446,40 +447,6 @@ for (var i = 8; i < 256; i += 1) {
 for (var i = 0; i < 255; i += 1) {
   QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]] = i;
 }
-
-function QRBitBuffer() {
-  this.buffer = [];
-  this.length = 0;
-}
-
-QRBitBuffer.prototype = {
-  get(index) {
-    var bufIndex = Math.floor(index / 8);
-
-    return ((this.buffer[bufIndex] >>> (7 - index % 8)) & 1) == 1;
-  },
-  put(num, length) {
-    for (var i = 0; i < length; i += 1) {
-      this.putBit(((num >>> (length - i - 1)) & 1) == 1);
-    }
-  },
-  getLengthInBits() {
-    return this.length;
-  },
-  putBit(bit) {
-    var bufIndex = Math.floor(this.length / 8);
-
-    if (this.buffer.length <= bufIndex) {
-      this.buffer.push(0);
-    }
-
-    if (bit) {
-      this.buffer[bufIndex] |= (0x80 >>> (this.length % 8));
-    }
-
-    this.length++;
-  }
-};
 
 /**
  * Get the type by string length

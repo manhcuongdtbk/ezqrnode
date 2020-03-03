@@ -34,13 +34,14 @@ for (let i = 0; i < 255; i += 1) {
  * @param {Number} nCorrectLevel
  * @return {Number} type
  */
+// eslint-disable-next-line no-underscore-dangle
 function _getTypeNumber(sText, _htOption) {
-  var nCorrectLevel = _htOption.correctLevel;
-  var nType = 1;
-  var length = _getUTF8Length(sText);
+  const nCorrectLevel = _htOption.correctLevel;
+  let nType = 1;
+  const length = _getUTF8Length(sText);
 
-  for (var i = 0, len = QRCodeLimitLength.length; i <= len; i += 1) {
-    var nLimit = 0;
+  for (let i = 0, len = QRCodeLimitLength.length; i <= len; i += 1) {
+    let nLimit = 0;
 
     switch (nCorrectLevel) {
       case QRErrorCorrectLevel.L:
@@ -68,7 +69,7 @@ function _getTypeNumber(sText, _htOption) {
     throw new Error("Too long data");
   }
 
-  if(_htOption.version != 0){
+  if (_htOption.version !== 0) {
     if (nType <= _htOption.version) {
       nType = _htOption.version;
       _htOption.runVersion = nType;
@@ -81,10 +82,11 @@ function _getTypeNumber(sText, _htOption) {
   return nType;
 }
 
+// eslint-disable-next-line no-underscore-dangle
 function _getUTF8Length(sText) {
-  var replacedText = encodeURI(sText).toString().replace(/\%[0-9a-fA-F]{2}/g, 'a');
+  const replacedText = encodeURI(sText).toString().replace(/\%[0-9a-fA-F]{2}/g, 'a');
 
-  return replacedText.length + (replacedText.length != sText ? 3 : 0);
+  return replacedText.length + (replacedText.length !== sText ? 3 : 0);
 }
 
 /**

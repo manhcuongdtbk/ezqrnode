@@ -1,4 +1,4 @@
-var { createCanvas, loadImage, Image } = require("canvas");
+const { createCanvas, Image } = require("canvas");
 const fs = require("fs");
 const constants = require("./core/constants");
 const QRRSBlock = require("./core/qr-rs-block");

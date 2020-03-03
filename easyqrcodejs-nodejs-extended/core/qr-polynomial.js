@@ -1,28 +1,32 @@
-function QRPolynomial(num, shift) {
-  if (num.length === undefined) {
-    throw new Error(`${num.length}/${shift}`);
+const QRMath = require("./qr-math");
+
+class QRPolynomial {
+  constructor(num, shift) {
+    if (num.length === undefined) {
+      throw new Error(`${num.length}/${shift}`);
+    }
+
+    let offset = 0;
+
+    while (offset < num.length && num[offset] === 0) {
+      offset += 1;
+    }
+
+    this.num = new Array(num.length - offset + shift);
+
+    for (let i = 0; i < num.length - offset; i += 1) {
+      this.num[i] = num[i + offset];
+    }
   }
 
-  let offset = 0;
-
-  while (offset < num.length && num[offset] === 0) {
-    offset += 1;
-  }
-
-  this.num = new Array(num.length - offset + shift);
-
-  for (let i = 0; i < num.length - offset; i += 1) {
-    this.num[i] = num[i + offset];
-  }
-}
-
-QRPolynomial.prototype = {
   get(index) {
     return this.num[index];
-  },
+  }
+
   getLength() {
     return this.num.length;
-  },
+  }
+
   multiply(e) {
     let num = new Array(this.getLength() + e.getLength() - 1);
 
@@ -33,7 +37,8 @@ QRPolynomial.prototype = {
     }
 
     return new QRPolynomial(num, 0);
-  },
+  }
+
   mod(e) {
     if (this.getLength() - e.getLength() < 0) {
       return this;
@@ -52,8 +57,6 @@ QRPolynomial.prototype = {
 
     return new QRPolynomial(num, 0).mod(e);
   }
-};
-
-const QRMath = require("./qr-math");
+}
 
 module.exports = QRPolynomial;

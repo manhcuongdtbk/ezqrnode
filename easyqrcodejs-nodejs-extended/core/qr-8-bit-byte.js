@@ -8,8 +8,8 @@ class QR8bitByte {
 
     // Added to support UTF-8 Characters
     for (let i = 0, l = this.data.length; i < l; i += 1) {
-      let byteArray = [];
-      let code = this.data.charCodeAt(i);
+      const byteArray = [];
+      const code = this.data.charCodeAt(i);
 
       if (code > 0x10000) {
         byteArray[0] = 0xf0 | ((code & 0x1c0000) >>> 18);

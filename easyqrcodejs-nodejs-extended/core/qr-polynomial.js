@@ -28,7 +28,7 @@ class QRPolynomial {
   }
 
   multiply(e) {
-    let num = new Array(this.getLength() + e.getLength() - 1);
+    const num = new Array(this.getLength() + e.getLength() - 1);
 
     for (let i = 0; i < this.getLength(); i += 1) {
       for (let j = 0; j < e.getLength(); j += 1) {
@@ -45,7 +45,7 @@ class QRPolynomial {
     }
 
     const ratio = QRMath.glog(this.get(0)) - QRMath.glog(e.get(0));
-    let num = new Array(this.getLength());
+    const num = new Array(this.getLength());
 
     for (let i = 0; i < this.getLength(); i += 1) {
       num[i] = this.get(i);

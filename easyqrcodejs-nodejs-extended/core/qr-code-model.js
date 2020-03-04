@@ -14,16 +14,16 @@ class QRCodeModel {
     this.dataList = [];
   }
 
-  static PAD0 = 0xec;
+  // static PAD0 = 0xec;
 
-  static PAD1 = 0x11;
+  // static PAD1 = 0x11;
 
   static createData(typeNumber, errorCorrectLevel, dataList) {
     const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
-    let buffer = new QRBitBuffer();
+    const buffer = new QRBitBuffer();
 
     for (let i = 0; i < dataList.length; i += 1) {
-      let data = dataList[i];
+      const data = dataList[i];
       buffer.put(data.mode, 4);
       buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber));
       data.write(buffer);
@@ -68,8 +68,8 @@ class QRCodeModel {
     let offset = 0;
     let maxDcCount = 0;
     let maxEcCount = 0;
-    let dcdata = new Array(rsBlocks.length);
-    let ecdata = new Array(rsBlocks.length);
+    const dcdata = new Array(rsBlocks.length);
+    const ecdata = new Array(rsBlocks.length);
 
     for (let r = 0; r < rsBlocks.length; r += 1) {
       const dcCount = rsBlocks[r].dataCount;
@@ -84,8 +84,8 @@ class QRCodeModel {
 
       offset += dcCount;
       const rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-      let rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
-      let modPoly = rawPoly.mod(rsPoly);
+      const rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+      const modPoly = rawPoly.mod(rsPoly);
       ecdata[r] = new Array(rsPoly.getLength() - 1);
 
       for (let i = 0; i < ecdata[r].length; i += 1) {
@@ -100,7 +100,7 @@ class QRCodeModel {
       totalCodeCount += rsBlocks[i].totalCount;
     }
 
-    let data = new Array(totalCodeCount);
+    const data = new Array(totalCodeCount);
     let index = 0;
 
     for (let i = 0; i < maxDcCount; i += 1) {
@@ -146,7 +146,7 @@ class QRCodeModel {
     if (block[1]) {
       let type = `P${block[1]}_${block[2]}`; // PO_TL, PI_TL, PO_TR, PI_TR, PO_BL, PI_BL
 
-      if (block[2] == "A") {
+      if (block[2] === "A") {
         type = `A${block[1]}`; // AI, AO
       }
 
@@ -287,7 +287,7 @@ class QRCodeModel {
         continue;
       }
 
-      this.modules[r][6][0] = r % 2 == 0;
+      this.modules[r][6][0] = r % 2 === 0;
     }
 
     for (let c = 8; c < this.moduleCount - 8; c += 1) {
@@ -295,7 +295,7 @@ class QRCodeModel {
         continue;
       }
 
-      this.modules[6][c][0] = c % 2 == 0;
+      this.modules[6][c][0] = c % 2 === 0;
     }
   }
 
@@ -344,25 +344,25 @@ class QRCodeModel {
   }
 
   setupTypeNumber(test) {
-    let bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+    const bits = QRUtil.getBCHTypeNumber(this.typeNumber);
 
     for (let i = 0; i < 18; i += 1) {
-      const mod = !test && ((bits >> i) & 1) == 1;
+      const mod = !test && ((bits >> i) & 1) === 1;
       this.modules[Math.floor(i / 3)][(i % 3) + this.moduleCount - 8 - 3][0] = mod;
     }
 
     for (let i = 0; i < 18; i += 1) {
-      const mod = !test && ((bits >> i) & 1) == 1;
+      const mod = !test && ((bits >> i) & 1) === 1;
       this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)][0] = mod;
     }
   }
 
   setupTypeInfo(test, maskPattern) {
     const data = (this.errorCorrectLevel << 3) | maskPattern;
-    let bits = QRUtil.getBCHTypeInfo(data);
+    const bits = QRUtil.getBCHTypeInfo(data);
 
     for (let i = 0; i < 15; i += 1) {
-      const mod = !test && ((bits >> i) & 1) == 1;
+      const mod = !test && ((bits >> i) & 1) === 1;
 
       if (i < 6) {
         this.modules[i][8][0] = mod;
@@ -374,7 +374,7 @@ class QRCodeModel {
     }
 
     for (let i = 0; i < 15; i += 1) {
-      const mod = !test && ((bits >> i) & 1) == 1;
+      const mod = !test && ((bits >> i) & 1) === 1;
 
       if (i < 8) {
         this.modules[8][this.moduleCount - i - 1][0] = mod;
@@ -405,7 +405,7 @@ class QRCodeModel {
             let dark = false;
 
             if (byteIndex < data.length) {
-              dark = ((data[byteIndex] >>> bitIndex) & 1) == 1;
+              dark = ((data[byteIndex] >>> bitIndex) & 1) === 1;
             }
 
             const mask = QRUtil.getMask(maskPattern, row, col - c);

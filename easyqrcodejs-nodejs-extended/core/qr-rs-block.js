@@ -179,7 +179,7 @@ class QRRSBlock {
     }
 
     const length = rsBlock.length / 3;
-    let list = [];
+    const list = [];
 
     for (let i = 0; i < length; i += 1) {
       const count = rsBlock[i * 3 + 0];

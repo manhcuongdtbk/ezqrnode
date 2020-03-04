@@ -14,9 +14,9 @@ class QRCodeModel {
     this.dataList = [];
   }
 
-  // static PAD0 = 0xec;
+  static PAD0 = 0xec;
 
-  // static PAD1 = 0x11;
+  static PAD1 = 0x11;
 
   static createData(typeNumber, errorCorrectLevel, dataList) {
     const rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
@@ -141,25 +141,29 @@ class QRCodeModel {
       throw new Error(`${row},${col}`);
     }
 
-    const block = this.modules[row][col]; // [isDark(ture/false), EyeOuterOrInner(O/I), Position(TL/TR/BL/A) ]
+    const block = this.modules[row][col]; // [isDark(true/false), EyeOuterOrInner(O/I), Position(TL/TR/BL/A) ]
+
+    const darkLight = block[0] ? "D" : "L";
 
     if (block[1]) {
-      let type = `P${block[1]}_${block[2]}`; // PO_TL, PI_TL, PO_TR, PI_TR, PO_BL, PI_BL
+      // POL_TL, POD_TL, PIL_TL, PID_TL, POL_TR, POD_TR, PIL_TR, PID_TR, POL_BL, POD_BL, PIL_BL, PID_BL
+      let type = `P${block[1]}${darkLight}_${block[2]}`;
 
       if (block[2] === "A") {
-        type = `A${block[1]}`; // AI, AO
+        type = `A${block[1]}${darkLight}`; // AOL, AOD, AIL, AID
       }
 
-      const eyeInformation = {
+      if (block[3]) {
+        // AOL_TLC, AOL_TRC, AOL_BRC, AOL_BLC, AOD_TLC, AOD_TRC, AOD_BRC, AOD_BLC,
+        // AIL_TLC, AIL_TRC, AIL_BRC, AIL_BLC, AID_TLC, AID_TRC, AID_BRC, AID_BLC, AID_C
+        // Same for P
+        type += `_${block[3]}`;
+      }
+
+      return {
         isDarkBlock: block[0],
         type: type
       };
-
-      if (block[3]) {
-        eyeInformation.specialPosition = block[3];
-      }
-
-      return eyeInformation;
     }
 
     return null;
@@ -226,10 +230,24 @@ class QRCodeModel {
           this.modules[row + r][col + c][0] = true;
           this.modules[row + r][col + c][2] = posName; // Position
 
-          if (r == -0 || c == -0 || r === 6 || c === 6) {
+          if (r === 0 || c === 0 || r === 6 || c === 6) {
             this.modules[row + r][col + c][1] = "O"; // Position Outer
+
+            if (r === 0 && c === 0) {
+              this.modules[row + r][col + c][3] = "TLC";
+            } else if (r === 0 && c === 6) {
+              this.modules[row + r][col + c][3] = "TRC";
+            } else if (r === 6 && col === 6) {
+              this.modules[row + r][col + c][3] = "BRC";
+            } else if (r === 6 && col === 0) {
+              this.modules[row + r][col + c][3] = "BLC";
+            }
           } else {
             this.modules[row + r][col + c][1] = "I"; // Position Inner
+
+            if (r === 3 && col === 3) {
+              this.modules[row + r][col + c][3] = "C";
+            }
           }
         } else {
           this.modules[row + r][col + c][0] = false;
@@ -328,11 +346,13 @@ class QRCodeModel {
                   this.modules[row + r][col + c][3] = "BRC"; // Bottom Right Corner
                 } else if (r === 2 && c === -2) {
                   this.modules[row + r][col + c][3] = "BLC"; // Bottom Left Corner
-                } else if (r === 0 && c === 0) {
-                  this.modules[row + r][col + c][3] = "C"; // Center
                 }
               } else {
                 this.modules[row + r][col + c][1] = "I"; // Position Inner
+
+                if (r === 0 && c === 0) {
+                  this.modules[row + r][col + c][3] = "C"; // Center
+                }
               }
             } else {
               this.modules[row + r][col + c][0] = false;

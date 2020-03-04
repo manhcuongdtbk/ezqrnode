@@ -99,334 +99,208 @@ class Drawing {
       );
     }
 
-    function drawQrcode(oQRCode) {
+    function drawDataModule(x, y, width, height, styleType, scale = 1, context) {
+      // eslint-disable-next-line default-case
+      switch (styleType) {
+        case "roundedRectangle":
+          fillRoundedRect(context, x, y, width, height);
+          break;
+        case "rectangle":
+          context.fillRect(x, y, width, height);
+          break;
+        case "circle":
+          fillCircle(context, x, y, width, scale);
+          break;
+        case "star":
+          // Only support dotScale 0.5
+          fillStar(
+            context,
+            x + nWidth / 4,
+            y + nWidth / 4,
+            4,
+            (nWidth * scale) / 2,
+            (nWidth * scale) / 4
+          );
+          break;
+      }
+    }
+
+    function drawEye(
+      outerDarkX,
+      outerDarkY,
+      outerDarkSize,
+      outerDarkColor,
+      innerDarkColor,
+      styleType
+    ) {
+      const innerLightX = outerDarkX + nWidth;
+      const innerLightY = outerDarkY + nHeight;
+      const innerDarkX = innerLightX + nWidth;
+      const innerDarkY = innerLightY + nWidth;
+      const eyeEdgeSize = nWidth * 2;
+      const innerLightSize = outerDarkSize - eyeEdgeSize;
+      const innerDarkSize = innerLightSize - eyeEdgeSize;
+
+      _oContext.lineWidth = 0;
+
+      // eslint-disable-next-line default-case
+      switch (styleType) {
+        case "rectangle":
+          // Draw fill rectangle for the outer position
+          _oContext.fillStyle = outerDarkColor;
+          _oContext.strokeStyle = _oContext.fillStyle;
+          _oContext.fillRect(outerDarkX, outerDarkY, outerDarkSize, outerDarkSize);
+
+          // Clear unnecessary fill part inside the rectangle
+          if (_htOption.backgroundColor) {
+            _oContext.fillStyle = _htOption.backgroundColor;
+            _oContext.strokeStyle = _oContext.fillStyle;
+            _oContext.fillRect(innerLightX, innerLightY, innerLightSize, innerLightSize);
+          } else {
+            _oContext.clearRect(innerLightX, innerLightY, innerLightSize, innerLightSize);
+          }
+
+          // Draw fill rectangle for the inner position
+          _oContext.fillStyle = innerDarkColor;
+          _oContext.strokeStyle = _oContext.fillStyle;
+          _oContext.fillRect(innerDarkX, innerDarkY, innerDarkSize, innerDarkSize);
+          break;
+        case "roundedRectangle":
+          // Draw fill rounded rectangle for the outer position
+          _oContext.fillStyle = outerDarkColor;
+          _oContext.strokeStyle = _oContext.fillStyle;
+          fillRoundedRect(_oContext, outerDarkX, outerDarkY, outerDarkSize, outerDarkSize, 30);
+
+          // Clear unnecessary fill part inside the rounded rectangle
+          if (_htOption.backgroundColor) {
+            _oContext.fillStyle = _htOption.backgroundColor;
+            _oContext.strokeStyle = _oContext.fillStyle;
+            fillRoundedRect(
+              _oContext,
+              innerLightX,
+              innerLightY,
+              innerLightSize,
+              innerLightSize,
+              30
+            );
+          } else {
+            clearRoundedRect(
+              _oContext,
+              innerLightX,
+              innerLightY,
+              innerLightSize,
+              innerLightSize,
+              30
+            );
+          }
+
+          // Draw fill rounded rectangle for the inner position
+          _oContext.fillStyle = innerDarkColor;
+          _oContext.strokeStyle = _oContext.fillStyle;
+          fillRoundedRect(_oContext, innerDarkX, innerDarkY, innerDarkSize, innerDarkSize, 30);
+          break;
+        case "circle":
+          // Draw circle for the outer position
+          _oContext.fillStyle = outerDarkColor;
+          _oContext.strokeStyle = _oContext.fillStyle;
+          fillCircle(_oContext, outerDarkX, outerDarkY, outerDarkSize);
+
+          // Clear unnecessary fill part inside the circle
+          if (_htOption.backgroundColor) {
+            _oContext.fillStyle = _htOption.backgroundColor;
+            _oContext.strokeStyle = _oContext.fillStyle;
+            fillCircle(_oContext, innerLightX, innerLightY, innerLightSize);
+          } else {
+            clearCircle(_oContext, innerLightX, innerLightY, innerLightSize);
+          }
+
+          // Draw circle for the inner position
+          _oContext.fillStyle = innerDarkColor;
+          _oContext.strokeStyle = _oContext.fillStyle;
+          fillCircle(_oContext, innerDarkX, innerDarkY, innerDarkSize);
+          break;
+      }
+    }
+
+    const drawQrcode = () => {
       for (let row = 0; row < nCount; row += 1) {
         for (let col = 0; col < nCount; col += 1) {
           const nLeft = col * nWidth + _htOption.quietZoneSize;
           const nTop = row * nHeight + _htOption.quietZoneSize;
           const bIsDark = oQRCode.isDark(row, col);
-          const eye = oQRCode.getEye(row, col); // { isDark: true/false, type: PO_TL, PI_TL, PO_TR, PI_TR, PO_BL, PI_BL };
-          const positionOuterDarkWidth = nWidth * 7; // width of one module * position outer dark module quantity
-          const positionOuterDarkHeight = nHeight * 7;
-          const positionInnerLightWidth = nWidth * 5;
-          const positionInnerLightHeight = nHeight * 5;
-          const positionInnerDarkWidth = nWidth * 3;
-          const positionInnerDarkHeight = nHeight * 3;
+          const eye = oQRCode.getEye(row, col);
 
-          // Position Outer Dark Top Left Top Left Corner [row column]
-          const POD_TL_TLC = [0, 0];
-          let isPOD_TL = false;
-          // Position Outer Dark Top Right Top Left Corner [row column]
-          const POD_TR_TLC = [0, nCount - 7];
-          let isPOD_TR = false;
-          // Position Outer Dark Bottom Left Top Left Corner [row column]
-          const POD_BL_TLC = [nCount - 7, 0];
-          let isPOD_BL = false;
-          // Position outer dark color
-          let POD_color = null;
-          // Position inner dark color
-          let PID_color = null;
+          if (eye) {
+            const eyeType = eye.type;
+            let eyeSize = null;
+            let outerDarkColor = null;
+            let innerDarkColor = null;
+            let styleType = null;
+            let remainingEyeColumn = null;
 
-          if (row === POD_TL_TLC[0] && col === POD_TL_TLC[1]) {
-            isPOD_TL = true;
-            POD_color = _htOption.PO_TL || _htOption.PO || _htOption.colorDark;
-            PID_color = _htOption.PI_TL || _htOption.PI || _htOption.colorDark;
-          } else if (row === POD_TR_TLC[0] && col === POD_TR_TLC[1]) {
-            isPOD_TR = true;
-            POD_color = _htOption.PO_TR || _htOption.PO || _htOption.colorDark;
-            PID_color = _htOption.PI_TR || _htOption.PI || _htOption.colorDark;
-          } else if (row === POD_BL_TLC[0] && col === POD_BL_TLC[1]) {
-            isPOD_BL = true;
-            POD_color = _htOption.PO_BL || _htOption.PO || _htOption.colorDark;
-            PID_color = _htOption.PI_BL || _htOption.PI || _htOption.colorDark;
-          }
-
-          // Draw the whole position outer and inner
-          if (isPOD_TL || isPOD_TR || isPOD_BL) {
-            // Current Position Outer Dark Top Left Corner Coordinate
-            const current_POD_TLC = [nLeft, nTop];
-            // Position Inner Light Top Left Corner Coordinate
-            const PIL_TLC = [current_POD_TLC[0] + nWidth, current_POD_TLC[1] + nHeight];
-            // Position Inner Dark Top Left Corner Coordinate
-            const PID_TLC = [PIL_TLC[0] + nWidth, PIL_TLC[1] + nWidth];
-
-            _oContext.lineWidth = 0;
-
-            // eslint-disable-next-line default-case
-            switch (_htOption.positionStyle) {
-              case "rectangle":
-                // Draw fill rectangle for the outer position
-                _oContext.strokeStyle = POD_color;
-                _oContext.fillStyle = POD_color;
-                _oContext.fillRect(
-                  current_POD_TLC[0],
-                  current_POD_TLC[1],
-                  positionOuterDarkWidth,
-                  positionOuterDarkHeight
-                );
-
-                // Clear unnecessary fill part inside the rectangle
-                if (_htOption.backgroundColor) {
-                  _oContext.fillStyle = _htOption.backgroundColor;
-                  _oContext.strokeStyle = _oContext.fillStyle;
-                  _oContext.fillRect(
-                    PIL_TLC[0],
-                    PIL_TLC[1],
-                    positionInnerLightWidth,
-                    positionInnerLightHeight
-                  );
-                } else {
-                  _oContext.clearRect(
-                    PIL_TLC[0],
-                    PIL_TLC[1],
-                    positionInnerLightWidth,
-                    positionInnerLightHeight
-                  );
+            // Draw the whole position outer and inner
+            if (eyeType) {
+              if (
+                eyeType === "POD_TL_TLC" ||
+                eyeType === "POD_TR_TLC" ||
+                eyeType === "POD_BL_TLC" ||
+                eyeType === "AOD_TLC"
+              ) {
+                // eslint-disable-next-line default-case
+                switch (eyeType) {
+                  case "POD_TL_TLC":
+                    outerDarkColor = _htOption.PO_TL || _htOption.PO || _htOption.colorDark;
+                    innerDarkColor = _htOption.PI_TL || _htOption.PI || _htOption.colorDark;
+                    break;
+                  case "POD_TR_TLC":
+                    outerDarkColor = _htOption.PO_TR || _htOption.PO || _htOption.colorDark;
+                    innerDarkColor = _htOption.PI_TR || _htOption.PI || _htOption.colorDark;
+                    break;
+                  case "POD_BL_TLC":
+                    outerDarkColor = _htOption.PO_BL || _htOption.PO || _htOption.colorDark;
+                    innerDarkColor = _htOption.PI_BL || _htOption.PI || _htOption.colorDark;
+                    break;
+                  case "AOD_TLC":
+                    // Current QRCode version
+                    // console.log(oQRCode.typeNumber)
+                    outerDarkColor = _htOption.AO || _htOption.colorDark;
+                    innerDarkColor = _htOption.AI || _htOption.colorDark;
+                    eyeSize = nWidth * 5;
+                    styleType = _htOption.alignmentStyle;
+                    remainingEyeColumn = 4;
+                    break;
                 }
-
-                // Draw fill rectangle for the inner position
-                _oContext.strokeStyle = PID_color;
-                _oContext.fillStyle = PID_color;
-                _oContext.fillRect(
-                  PID_TLC[0],
-                  PID_TLC[1],
-                  positionInnerDarkWidth,
-                  positionInnerDarkHeight
-                );
-                break;
-              case "roundedRectangle":
-                // Draw fill rounded rectangle for the outer position
-                _oContext.strokeStyle = POD_color;
-                _oContext.fillStyle = POD_color;
-                fillRoundedRect(
-                  _oContext,
-                  current_POD_TLC[0],
-                  current_POD_TLC[1],
-                  positionOuterDarkWidth,
-                  positionOuterDarkHeight,
-                  30
-                );
-
-                // Clear unnecessary fill part inside the rounded rectangle
-                if (_htOption.backgroundColor) {
-                  _oContext.fillStyle = _htOption.backgroundColor;
-                  _oContext.strokeStyle = _oContext.fillStyle;
-                  fillRoundedRect(
-                    _oContext,
-                    PIL_TLC[0],
-                    PIL_TLC[1],
-                    positionInnerLightWidth,
-                    positionInnerLightHeight,
-                    30
-                  );
-                } else {
-                  clearRoundedRect(
-                    _oContext,
-                    PIL_TLC[0],
-                    PIL_TLC[1],
-                    positionInnerLightWidth,
-                    positionInnerLightHeight,
-                    30
-                  );
-                }
-
-                // Draw fill rounded rectangle for the inner position
-                _oContext.strokeStyle = PID_color;
-                _oContext.fillStyle = PID_color;
-                fillRoundedRect(
-                  _oContext,
-                  PID_TLC[0],
-                  PID_TLC[1],
-                  positionInnerDarkWidth,
-                  positionInnerDarkHeight,
-                  30
-                );
-                break;
-              case "circle":
-                // Draw circle for the outer position
-                _oContext.strokeStyle = POD_color;
-                _oContext.fillStyle = POD_color;
-                fillCircle(
-                  _oContext,
-                  current_POD_TLC[0],
-                  current_POD_TLC[1],
-                  positionOuterDarkWidth
-                );
-
-                // Clear unnecessary fill part inside the circle
-                if (_htOption.backgroundColor) {
-                  _oContext.fillStyle = _htOption.backgroundColor;
-                  _oContext.strokeStyle = _oContext.fillStyle;
-                  fillCircle(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth);
-                } else {
-                  clearCircle(_oContext, PIL_TLC[0], PIL_TLC[1], positionInnerLightWidth);
-                }
-
-                // Draw circle for the inner position
-                _oContext.strokeStyle = PID_color;
-                _oContext.fillStyle = PID_color;
-                fillCircle(_oContext, PID_TLC[0], PID_TLC[1], positionInnerDarkWidth);
-                break;
-            }
-
-            // Skip other column of the position outer dark
-            col += 6;
-          }
-          // Draw alignment pattern
-          else if (eye) {
-            if (eye.type === "PO_TL" || eye.type === "PO_TR" || eye.type === "PO_BL") {
-              // Skip other column of the position outer dark
-              col += 6;
-            } else if (eye.type === "AO") {
-              // Current QRCode version
-              // console.log(oQRCode.typeNumber)
-              if (eye.specialPosition === "TLC") {
-                // Current Alignment Outer Dark Top Left Corner Coordinate
-                const current_AOD_TLC = [nLeft, nTop];
-                const AIL_TLC = [current_AOD_TLC[0] + nWidth, current_AOD_TLC[1] + nHeight];
-                const AID = [AIL_TLC[0] + nWidth, AIL_TLC[1] + nWidth];
-                const alignmentOuterDarkWidth = nWidth * 5;
-                const alignmentOuterDarkHeight = nHeight * 5;
-                const alignmentInnerLightWidth = nWidth * 3;
-                const alignmentInnerLightHeight = nHeight * 3;
-                const alignmentInnerDarkWidth = nWidth;
-                const alignmentInnerDarkHeight = nHeight;
-
-                // Alignment outer dark color
-                const AOD_color = _htOption.AO || _htOption.colorDark;
-                // TODO: Custom alignment inner dark color
-                const AID_color = _htOption.AI || _htOption.colorDark;
 
                 // eslint-disable-next-line default-case
-                switch (_htOption.alignmentStyle) {
-                  case "rectangle":
-                    // Draw fill rectangle for the outer position
-                    _oContext.strokeStyle = AOD_color;
-                    _oContext.fillStyle = AOD_color;
-                    _oContext.fillRect(
-                      current_AOD_TLC[0],
-                      current_AOD_TLC[1],
-                      alignmentOuterDarkWidth,
-                      alignmentOuterDarkHeight
-                    );
-
-                    // Clear unnecessary fill part inside the rectangle
-                    if (_htOption.backgroundColor) {
-                      _oContext.fillStyle = _htOption.backgroundColor;
-                      _oContext.strokeStyle = _oContext.fillStyle;
-                      _oContext.fillRect(
-                        AIL_TLC[0],
-                        AIL_TLC[1],
-                        alignmentInnerLightWidth,
-                        alignmentInnerLightHeight
-                      );
-                    } else {
-                      _oContext.clearRect(
-                        AIL_TLC[0],
-                        AIL_TLC[1],
-                        alignmentInnerLightWidth,
-                        alignmentInnerLightHeight
-                      );
-                    }
-
-                    // Draw fill rectangle for the inner position
-                    _oContext.strokeStyle = AID_color;
-                    _oContext.fillStyle = AID_color;
-                    _oContext.fillRect(
-                      AID[0],
-                      AID[1],
-                      alignmentInnerDarkWidth,
-                      alignmentInnerDarkHeight
-                    );
-                    break;
-                  case "roundedRectangle":
-                    // Draw fill rounded rectangle for the outer position
-                    _oContext.strokeStyle = AOD_color;
-                    _oContext.fillStyle = AOD_color;
-                    fillRoundedRect(
-                      _oContext,
-                      current_AOD_TLC[0],
-                      current_AOD_TLC[1],
-                      alignmentOuterDarkWidth,
-                      alignmentOuterDarkHeight,
-                      30
-                    );
-
-                    // Clear unnecessary fill part inside the rounded rectangle
-                    if (_htOption.backgroundColor) {
-                      _oContext.fillStyle = _htOption.backgroundColor;
-                      _oContext.strokeStyle = _oContext.fillStyle;
-                      fillRoundedRect(
-                        _oContext,
-                        AIL_TLC[0],
-                        AIL_TLC[1],
-                        alignmentInnerLightWidth,
-                        alignmentInnerLightHeight,
-                        30
-                      );
-                    } else {
-                      clearRoundedRect(
-                        _oContext,
-                        AIL_TLC[0],
-                        AIL_TLC[1],
-                        alignmentInnerLightWidth,
-                        alignmentInnerLightHeight,
-                        30
-                      );
-                    }
-
-                    // Draw fill rounded rectangle for the inner position
-                    _oContext.strokeStyle = AID_color;
-                    _oContext.fillStyle = AID_color;
-                    fillRoundedRect(
-                      _oContext,
-                      AID[0],
-                      AID[1],
-                      alignmentInnerDarkWidth,
-                      alignmentInnerDarkHeight,
-                      30
-                    );
-                    break;
-                  case "circle":
-                    // Draw fill circle for the outer position
-                    _oContext.strokeStyle = AOD_color;
-                    _oContext.fillStyle = AOD_color;
-                    fillCircle(
-                      _oContext,
-                      current_AOD_TLC[0],
-                      current_AOD_TLC[1],
-                      alignmentOuterDarkWidth
-                    );
-
-                    // Clear unnecessary fill part inside the circle
-                    if (_htOption.backgroundColor) {
-                      _oContext.fillStyle = _htOption.backgroundColor;
-                      _oContext.strokeStyle = _oContext.fillStyle;
-                      fillCircle(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth);
-                    } else {
-                      clearCircle(_oContext, AIL_TLC[0], AIL_TLC[1], alignmentInnerLightWidth);
-                    }
-
-                    // Draw fill circle for the inner position
-                    _oContext.strokeStyle = AID_color;
-                    _oContext.fillStyle = AID_color;
-                    fillCircle(_oContext, AID[0], AID[1], alignmentInnerDarkWidth);
+                switch (eyeType) {
+                  case "POD_TL_TLC":
+                  case "POD_TR_TLC":
+                  case "POD_BL_TLC":
+                    eyeSize = nWidth * 7;
+                    styleType = _htOption.positionStyle;
+                    remainingEyeColumn = 6;
                     break;
                 }
+
+                drawEye(nLeft, nTop, eyeSize, outerDarkColor, innerDarkColor, styleType);
+              } else if (eyeType === "POD_TL" || eyeType === "POD_TR" || eyeType === "POD_BL") {
+                remainingEyeColumn = 6;
+              } else if (eyeType === "AOD") {
+                remainingEyeColumn = 4;
               }
 
-              // Skip other column of the alignment outer dark
-              col += 4;
+              // Skip remaining eye columns
+              col += remainingEyeColumn;
             }
           }
           // Draw timing module and data module
           else {
-            const nowDotScale = _htOption.dotScale;
             // Top left coordinate of the dot
-            const dotX = nLeft + (nWidth * (1 - nowDotScale)) / 2;
-            const dotY = nTop + (nHeight * (1 - nowDotScale)) / 2;
-            const dotWidth = nWidth * nowDotScale;
-            const dotHeight = nHeight * nowDotScale;
+            const dotX = nLeft + (nWidth * (1 - _htOption.dotScale)) / 2;
+            const dotY = nTop + (nHeight * (1 - _htOption.dotScale)) / 2;
+            const dotWidth = nWidth * _htOption.dotScale;
+            const dotHeight = nHeight * _htOption.dotScale;
+            let styleType = null;
 
             // Draw dot background to increase contrast on hard to see position in the background image
             const dotBackgroundDarkColor = "rgba(0, 0, 0, 0.180)";
@@ -440,106 +314,40 @@ class Drawing {
             _oContext.strokeStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
             _oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
 
-            // Horizontal timing pattern
-            if (row === 6) {
+            // Timing pattern
+            if (row === 6 || col === 6) {
               const timingHColorDark =
                 _htOption.timing_H || _htOption.timing || _htOption.colorDark;
               _oContext.fillStyle = bIsDark ? timingHColorDark : _htOption.colorLight;
               _oContext.strokeStyle = _oContext.fillStyle;
-
-              // eslint-disable-next-line default-case
-              switch (_htOption.timingStyle) {
-                case "roundedRectangle":
-                  fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
-                  break;
-                case "rectangle":
-                  _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
-                  break;
-                case "circle":
-                  fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
-                  break;
-                case "star":
-                  // Only support dotScale 0.5
-                  fillStar(
-                    _oContext,
-                    dotX + nWidth / 4,
-                    dotY + nWidth / 4,
-                    4,
-                    (nWidth * nowDotScale) / 2,
-                    (nWidth * nowDotScale) / 4
-                  );
-                  break;
-              }
-            }
-            // Vertical timing pattern
-            else if (col === 6) {
               const timingVColorDark =
                 _htOption.timing_V || _htOption.timing || _htOption.colorDark;
               _oContext.fillStyle = bIsDark ? timingVColorDark : _htOption.colorLight;
               _oContext.strokeStyle = _oContext.fillStyle;
-
-              // eslint-disable-next-line default-case
-              switch (_htOption.timingStyle) {
-                case "roundedRectangle":
-                  fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
-                  break;
-                case "rectangle":
-                  _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
-                  break;
-                case "circle":
-                  fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
-                  break;
-                case "star":
-                  // Only support dotScale 0.5
-                  fillStar(
-                    _oContext,
-                    dotX + nWidth / 4,
-                    dotY + nWidth / 4,
-                    4,
-                    (nWidth * nowDotScale) / 2,
-                    (nWidth * nowDotScale) / 4
-                  );
-                  break;
-              }
+              styleType = _htOption.timingStyle;
             }
             // Data module
             else {
               if (_htOption.backgroundImage) {
                 if (_htOption.autoColor) {
                   _oContext.fillStyle = bIsDark ? autoColorDark : autoColorLight;
-                } else {
-                  _oContext.fillStyle = bIsDark ? _htOption.colorDark : _htOption.colorLight;
                 }
 
                 _oContext.strokeStyle = _oContext.fillStyle;
-              } else {
-                _oContext.strokeStyle = _oContext.fillStyle;
               }
 
-              // eslint-disable-next-line default-case
-              switch (_htOption.dotStyle) {
-                case "roundedRectangle":
-                  fillRoundedRect(_oContext, dotX, dotY, dotWidth, dotHeight);
-                  break;
-                case "rectangle":
-                  _oContext.fillRect(dotX, dotY, dotWidth, dotHeight);
-                  break;
-                case "circle":
-                  fillCircle(_oContext, dotX, dotY, nWidth, nowDotScale);
-                  break;
-                case "star":
-                  // Only support dotScale 0.5
-                  fillStar(
-                    _oContext,
-                    dotX + nWidth / 4,
-                    dotY + nWidth / 4,
-                    4,
-                    (nWidth * nowDotScale) / 2,
-                    (nWidth * nowDotScale) / 4
-                  );
-                  break;
-              }
+              styleType = _htOption.dotStyle;
             }
+
+            drawDataModule(
+              dotX,
+              dotY,
+              dotWidth,
+              dotHeight,
+              styleType,
+              _htOption.dotScale,
+              _oContext
+            );
           }
 
           if (_htOption.dotScale !== 1 && !eye) {
@@ -621,7 +429,7 @@ class Drawing {
 
         this.makeImage();
       }
-    }
+    };
 
     if (_htOption.backgroundImage) {
       // backgroundImage
@@ -638,8 +446,7 @@ class Drawing {
           _htOption.height + _htOption.quietZoneSize * 2
         );
         _oContext.globalAlpha = 1;
-
-        drawQrcode.call(this, oQRCode);
+        drawQrcode();
       };
 
       bgImg.src = _htOption.backgroundImage;
@@ -656,7 +463,7 @@ class Drawing {
         fillBackgroundColor(_htOption.backgroundColor);
       }
 
-      drawQrcode.call(this, oQRCode);
+      drawQrcode();
     }
   }
 

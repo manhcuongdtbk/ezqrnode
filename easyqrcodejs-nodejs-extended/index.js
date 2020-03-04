@@ -97,7 +97,7 @@ class QRCode {
       dotScale: 1, // Must be greater than 0, less than or equal to 1. default is 1
 
       quietZoneSize: 0, // Must be greater than or equal to 0. default is 0
-      quietZoneSizeUnit: "pixel", // 'pixel', 'module'
+      quietZoneSizeUnit: "pixel", // "pixel", "module"
       quietZoneColor: "transparent",
 
       logo: undefined,
@@ -134,7 +134,7 @@ class QRCode {
       onRenderingStart: undefined,
 
       // ==== Images format
-      format: "PNG", // 'PNG', 'JPG'
+      format: "PNG", // "PNG", "JPG"
       compressionLevel: 0, // ZLIB compression level (0-9). default is 0
       quality: 0.75, // An object specifying the quality (0 to 1). default is 0.75. (JPGs only)
 
@@ -142,16 +142,16 @@ class QRCode {
       version: 0, // The symbol versions of QR Code range from Version 1 to Version 40. default 0 means automatically choose the closest version based on the text length.
 
       // ==== Dot Style
-      dotStyle: "rectangle", // 'rectangle', 'roundedRectangle', 'circle', 'star'
+      dotStyle: "rectangle", // "rectangle", "roundedRectangle", "circle", "star"
 
       // ==== Timing style
-      timingStyle: "rectangle", // 'rectangle', 'roundedRectangle', 'circle', 'star'
+      timingStyle: "rectangle", // "rectangle", "roundedRectangle", "circle", "star"
 
       // ==== Position style
-      positionStyle: "rectangle", // 'rectangle', 'roundedRectangle', 'circle'
+      positionStyle: "rectangle", // "rectangle", "roundedRectangle", "circle"
 
       // ==== Alignment style
-      alignmentStyle: "rectangle", // 'rectangle', 'roundedRectangle', 'circle'
+      alignmentStyle: "rectangle", // "rectangle", "roundedRectangle", "circle"
 
       // ==== Degree Rotation
       degreeRotation: 0 // 0, 90, 180, 270

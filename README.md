@@ -13,6 +13,7 @@ EzQRNode is a NodeJS server side QRCode image generator. Support setting Dot sty
 - Support custom Alignment Pattern inner fill and outer border color
 - Support custom Timing Patterns vertical, horizontal color and scale
 - Support Logo images (including transparent PNG images)
+- Support Logo Placeholder
 - Support Background Image
 - Support QR Code rotation
 
@@ -80,6 +81,7 @@ var qrcode = new QRCode(options);
   | **logoHeight** | N | Number | `undefined` |  Width |
   | **logoBackgroundTransparent** | N | Boolean | `false` |  Whether the background transparent image(`PNG`) shows transparency. When `true`, `logoBackgroundColor` is invalid |
   | **logoBackgroundColor** | N | String | `#ffffff` |  Set Background CSS Color when image background transparent. Valid when `logoBackgroundTransparent` is `false` |
+  | **logoPlaceholder** | N | Boolean | `false` |  Make a blank placeholder for logo insertion |
   | Backgroud Image options|  ---|--- |---|---|
   | **backgroundImage** | N | String | `undefined` | Background Image Path. If use relative address, relative to `easy.qrcode.min.js` |
   | **backgroundImageAlpha** | N | Number | `1.0` |  Background image transparency. Ranges: `0-1.0`  |
@@ -110,12 +112,21 @@ var qrcode = new QRCode(options);
   | **onRenderingStart(qrCodeOptions)** | N | Function | `undefined` | Callback function when rendering start work. can use to hide loading state or handling.  |
   | Images format options| --- | ---|---|---|
     | **format** | N | String | `PNG` | 'PNG' or 'JPG'  |
-  | **compressionLevel** | N | Number | `6` | ZLIB compression level between 0 and 9. (**PNGs only**)  |
+  | **compressionLevel** | N | Number | `0` | ZLIB compression level between 0 and 9. (**PNGs only**)  |
   | **quality** | N | Number | `0.75` | An object specifying the quality (0 to 1). (**JPGs only**)  |
   | Version options| --- | ---|---|---|
     | **version** | N | Number | `0` | The symbol versions of QR Code range from Version `1` to Version `40`. default 0 means automatically choose the closest version based on the text length.  [Information capacity and versions of QR Codes](https://www.qrcode.com/en/about/version.html) **NOTE**: If you set a value less than the minimum version available for text, the minimum version is automatically used. |
   | Rotation| --- | ---|---|---|
     | **degreeRotation** | N | Number | `0` | `0`<br/>`90`<br/>`180`<br/>`270`
+
+- Logo Placeholder Notes:
+
+  | Error Correction Level | Error Correction Percentage | Max Allowed Input Alphanumeric Length | Max QR Code Version | Safe Input Alphanumeric Length | Safe QR Code Version |
+  |:----------------------:|:---------------------------:|:-------------------------------------:|:-------------------:|:------------------------------:|:--------------------:|
+  |            L           |              7%             |                  182                  |          12         |               65               |           6          |
+  |     **M (default)**    |           **15%**           |                **142**                |        **12**       |             **51**             |         **6**        |
+  |            Q           |             25%             |                  100                  |          12         |               35               |           6          |
+  |            H           |             30%             |                   76                  |          12         |               27               |           6          |
 
 ### Methods
 

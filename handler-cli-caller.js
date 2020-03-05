@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const { handler } = require("./index");
 
-const randomText = crypto.randomBytes(20).toString("hex");
+const randomText = crypto.randomBytes(35).toString("hex");
 const fixedText = "cuong.bui@tomosia.com";
 
 const options = {
@@ -31,7 +31,8 @@ const options = {
   quietZoneSizeUnit: "module",
   quietZoneColor: "red",
   backgroundColor: "white",
-  token: "b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b"
+  token: "b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b",
+  logoPlaceholder: true
 };
 
 const eventEmulator = { queryStringParameters: options };

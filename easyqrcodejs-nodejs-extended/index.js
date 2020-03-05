@@ -46,16 +46,16 @@ function _getTypeNumber(sText, _htOption) {
     // eslint-disable-next-line default-case
     switch (nCorrectLevel) {
       case QRErrorCorrectLevel.L:
-        nLimit = QRCodeLimitLength[i][0];
+        [nLimit] = QRCodeLimitLength[i];
         break;
       case QRErrorCorrectLevel.M:
-        nLimit = QRCodeLimitLength[i][1];
+        [, nLimit] = QRCodeLimitLength[i];
         break;
       case QRErrorCorrectLevel.Q:
-        nLimit = QRCodeLimitLength[i][2];
+        [, , nLimit] = QRCodeLimitLength[i];
         break;
       case QRErrorCorrectLevel.H:
-        nLimit = QRCodeLimitLength[i][3];
+        [, , , nLimit] = QRCodeLimitLength[i];
         break;
     }
 
@@ -105,6 +105,7 @@ class QRCode {
       logoHeight: undefined,
       logoBackgroundColor: "#ffffff",
       logoBackgroundTransparent: false,
+      logoPlaceholder: false, // Blank space at the center of the QR Module. default is false.
 
       // === Posotion Pattern(Eye) Color
       PO: undefined, // Global Posotion Outer color. if not set, the defaut is `colorDark`

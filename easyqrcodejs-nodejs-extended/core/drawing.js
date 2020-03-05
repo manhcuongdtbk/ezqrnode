@@ -1,5 +1,6 @@
 const { createCanvas, Image } = require("canvas");
 const fs = require("fs");
+const { QRErrorCorrectLevel } = require("./constants");
 // Custom dot styles
 const fillRoundedRect = require("../styles/rounded-rectangle");
 const fillCircle = require("../styles/circle");
@@ -222,9 +223,105 @@ class Drawing {
       }
     }
 
+    const logoPlaceholderModules = [];
+
     const drawQrcode = () => {
+      if (_htOption.logoPlaceholder && !_htOption.logo) {
+        // Error correction percentage, based on error correction level
+        let correctPercent = null;
+        let complementaryModuleCount = null;
+        const calculatedQRVersion = oQRCode.typeNumber;
+
+        // eslint-disable-next-line default-case
+        switch (_htOption.correctLevel) {
+          case QRErrorCorrectLevel.L:
+            correctPercent = 7 / 100; // 7%
+
+            if (calculatedQRVersion >= 1 && calculatedQRVersion <= 12) {
+              complementaryModuleCount = 1;
+            } else if (calculatedQRVersion >= 13) {
+              throw new Error("QR Code's Version is too high, can't make the logo placeholder");
+              // complementaryModuleCount = 3; // Should not go furthur than this version
+            }
+
+            break;
+          case QRErrorCorrectLevel.M:
+            correctPercent = 15 / 100; // 15%
+
+            if (calculatedQRVersion >= 1 && calculatedQRVersion <= 12) {
+              complementaryModuleCount = 2;
+            } else if (calculatedQRVersion >= 13) {
+              throw new Error("QR Code's Version is too high, can't make the logo placeholder");
+              // complementaryModuleCount = 8; // Should not go furthur than this version
+            }
+
+            break;
+          case QRErrorCorrectLevel.Q:
+            correctPercent = 25 / 100; // 25%
+
+            if (calculatedQRVersion >= 1 && calculatedQRVersion <= 12) {
+              complementaryModuleCount = 3;
+            } else if (calculatedQRVersion >= 13) {
+              throw new Error("QR Code's Version is too high, can't make the logo placeholder");
+              // complementaryModuleCount = 4; // Should not go furthur than this version
+            }
+
+            break;
+          case QRErrorCorrectLevel.H:
+            correctPercent = 30 / 100; // 30%
+
+            if (calculatedQRVersion >= 1 && calculatedQRVersion <= 12) {
+              complementaryModuleCount = 3;
+            } else if (calculatedQRVersion >= 13) {
+              throw new Error("QR Code's Version is too high, can't make the logo placeholder");
+              // complementaryModuleCount = 9; // Should not go furthur than this version
+            }
+
+            break;
+        }
+
+        // Calculate the top left corner's coordinate of the top left corner data module that forms
+        // a blank space square around QR Module's center point.
+        // Original explaination: https://math.stackexchange.com/a/1490157/756903
+        const centerPointX = (nCount / 2) * nWidth + _htOption.quietZoneSize;
+        const centerPointY = (nCount / 2) * nWidth + _htOption.quietZoneSize;
+        const QRModuleCount = nCount * nCount;
+        const placeholderModuleCount = QRModuleCount * correctPercent;
+        const placeholderEdgeModuleCount = Math.floor(Math.sqrt(placeholderModuleCount));
+        const placeholderEdgeWidth = placeholderEdgeModuleCount * nWidth;
+        const placeholderTLCX = centerPointX - placeholderEdgeWidth / 2; // Top left corner X coordinate
+        const placeholderTLCY = centerPointY - placeholderEdgeWidth / 2; // Top left corner Y coordinate
+        const placeholderTLCrow =
+          Math.floor((placeholderTLCX - _htOption.quietZoneSize) / nWidth) + 1;
+        const placeholderTLCcolumn =
+          Math.floor((placeholderTLCY - _htOption.quietZoneSize) / nWidth) + 1;
+
+        for (
+          let row = placeholderTLCrow + complementaryModuleCount;
+          row < placeholderTLCrow + placeholderEdgeModuleCount - complementaryModuleCount;
+          row += 1
+        ) {
+          for (
+            let column = placeholderTLCcolumn + complementaryModuleCount;
+            column < placeholderTLCcolumn + placeholderEdgeModuleCount - complementaryModuleCount;
+            column += 1
+          ) {
+            logoPlaceholderModules.push([row, column]);
+          }
+        }
+      }
+
       for (let row = 0; row < nCount; row += 1) {
         for (let col = 0; col < nCount; col += 1) {
+          if (
+            logoPlaceholderModules.length !== 0 &&
+            logoPlaceholderModules[0][0] === row &&
+            logoPlaceholderModules[0][1] === col
+          ) {
+            logoPlaceholderModules.shift();
+            continue;
+          }
+
           const nLeft = col * nWidth + _htOption.quietZoneSize;
           const nTop = row * nHeight + _htOption.quietZoneSize;
           const bIsDark = oQRCode.isDark(row, col);

@@ -13,7 +13,8 @@ exports.handler = async event => {
 
   if (token === "b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b") {
     const qrcode = new QRCode(options);
-    const data = await qrcode.saveImage({ path: "q.png" });
+    // const data = await qrcode.saveImage({ path: "dummy/q.png" });
+    const data = await qrcode.toDataURL();
     response = {
       statusCode: 200,
       headers: headers,

@@ -86,8 +86,8 @@ function _getTypeNumber(sText, _htOption) {
 class QRCode {
   constructor(vOption) {
     this._htOption = {
-      width: 256,
-      height: 256,
+      width: 1000,
+      height: 1000,
       typeNumber: 4,
       colorDark: "rgba(0, 0, 0, 0.6)",
       colorLight: "rgba(255, 255, 255, 0.7)",

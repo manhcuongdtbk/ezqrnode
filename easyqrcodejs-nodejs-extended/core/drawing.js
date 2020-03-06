@@ -100,32 +100,6 @@ class Drawing {
       );
     }
 
-    function drawDataModule(x, y, width, height, styleType, scale = 1, context) {
-      // eslint-disable-next-line default-case
-      switch (styleType) {
-        case "roundedRectangle":
-          fillRoundedRect(context, x, y, width, height);
-          break;
-        case "rectangle":
-          context.fillRect(x, y, width, height);
-          break;
-        case "circle":
-          fillCircle(context, x, y, width, scale);
-          break;
-        case "star":
-          // Only support dotScale 0.5
-          fillStar(
-            context,
-            x + nWidth / 4,
-            y + nWidth / 4,
-            4,
-            (nWidth * scale) / 2,
-            (nWidth * scale) / 4
-          );
-          break;
-      }
-    }
-
     function drawEye(
       outerDarkX,
       outerDarkY,
@@ -166,10 +140,13 @@ class Drawing {
           _oContext.strokeStyle = _oContext.fillStyle;
           _oContext.fillRect(innerDarkX, innerDarkY, innerDarkSize, innerDarkSize);
           break;
-        case "roundedRectangle":
+        case "roundedRectangle": {
+          // Best on 1000px width and 1000 px height
+
           // Draw fill rounded rectangle for the outer position
           _oContext.fillStyle = outerDarkColor;
           _oContext.strokeStyle = _oContext.fillStyle;
+
           fillRoundedRect(_oContext, outerDarkX, outerDarkY, outerDarkSize, outerDarkSize, 30);
 
           // Clear unnecessary fill part inside the rounded rectangle
@@ -198,8 +175,17 @@ class Drawing {
           // Draw fill rounded rectangle for the inner position
           _oContext.fillStyle = innerDarkColor;
           _oContext.strokeStyle = _oContext.fillStyle;
-          fillRoundedRect(_oContext, innerDarkX, innerDarkY, innerDarkSize, innerDarkSize, 30);
+          const innerDarkRadius = innerDarkSize === nWidth ? 10 : 30;
+          fillRoundedRect(
+            _oContext,
+            innerDarkX,
+            innerDarkY,
+            innerDarkSize,
+            innerDarkSize,
+            innerDarkRadius
+          );
           break;
+        }
         case "circle":
           // Draw circle for the outer position
           _oContext.fillStyle = outerDarkColor;
@@ -219,6 +205,33 @@ class Drawing {
           _oContext.fillStyle = innerDarkColor;
           _oContext.strokeStyle = _oContext.fillStyle;
           fillCircle(_oContext, innerDarkX, innerDarkY, innerDarkSize);
+          break;
+      }
+    }
+
+    function drawDataModule(x, y, width, height, styleType, scale = 1, context) {
+      // eslint-disable-next-line default-case
+      switch (styleType) {
+        case "roundedRectangle":
+          // Best on 1000px width and 1000 px height
+          fillRoundedRect(context, x, y, width, height);
+          break;
+        case "rectangle":
+          context.fillRect(x, y, width, height);
+          break;
+        case "circle":
+          fillCircle(context, x, y, width);
+          break;
+        case "star":
+          // Only support dotScale 0.5
+          fillStar(
+            context,
+            x + nWidth / 4,
+            y + nWidth / 4,
+            4,
+            (nWidth * scale) / 2,
+            (nWidth * scale) / 4
+          );
           break;
       }
     }

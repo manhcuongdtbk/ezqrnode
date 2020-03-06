@@ -7,7 +7,7 @@
  * @param {Number} scale The scale of the circle
  */
 
-var circle = require('./circle')
+const circle = require("./circle");
 
 function clearCircle(ctx, x, y, diameter, scale) {
   ctx.save();

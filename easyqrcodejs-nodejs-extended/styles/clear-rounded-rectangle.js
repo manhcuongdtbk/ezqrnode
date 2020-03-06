@@ -1,4 +1,4 @@
-var roundedRect = require('./rounded-rectangle')
+const roundedRect = require("./rounded-rectangle");
 
 function clearRoundedRect(context, x, y, width, height, radius) {
   context.save();

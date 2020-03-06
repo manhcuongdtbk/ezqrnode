@@ -4,22 +4,16 @@
  * @param {Number} x The top left x coordinate
  * @param {Number} y The top left y coordinate
  * @param {Number} diameter The diameter of the circle
- * @param {Number} scale The scale of the circle
  */
-function fillCircle(ctx, x, y, diameter, scale) {
-  if (typeof scale === 'undefined') {
-    scale = 1;
-  }
-
-  var radius = diameter / 2; // Arc radius
-  var startAngle = 0; // Starting point on circle, 0 degree
-  var endAngle = Math.PI * 2; // End point on circle, 360 degree
-  var scaledRadius = radius * scale;
-  var xCenter = x + scaledRadius;
-  var yCenter = y + scaledRadius;
+function fillCircle(ctx, x, y, diameter) {
+  const radius = diameter / 2; // Arc radius
+  const startAngle = 0; // Starting point on circle, 0 degree
+  const endAngle = Math.PI * 2; // End point on circle, 360 degree
+  const xCenter = x + radius;
+  const yCenter = y + radius;
 
   ctx.beginPath();
-  ctx.arc(xCenter, yCenter, scaledRadius, startAngle, endAngle);
+  ctx.arc(xCenter, yCenter, radius, startAngle, endAngle);
   ctx.fill();
   ctx.stroke();
 

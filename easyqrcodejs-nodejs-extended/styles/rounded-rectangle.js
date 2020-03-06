@@ -14,19 +14,15 @@
  * @param {Number} [radius.br = 0] Bottom right
  * @param {Number} [radius.bl = 0] Bottom left
  */
-function fillRoundedRect(ctx, x, y, width, height, radius) {
-  if (typeof radius === 'undefined') {
-    radius = 5;
-  }
-
-  if (typeof radius === 'number') {
+function fillRoundedRect(ctx, x, y, width, height, radius = 5) {
+  if (typeof radius === "number") {
     radius = { tl: radius, tr: radius, br: radius, bl: radius };
   } else {
-    var defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
+    const defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
 
-    for (var side in defaultRadius) {
+    defaultRadius.forEach(side => {
       radius[side] = radius[side] || defaultRadius[side];
-    }
+    });
   }
 
   ctx.beginPath();

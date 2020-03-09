@@ -147,43 +147,21 @@ class Drawing {
           _oContext.fillStyle = outerDarkColor;
           _oContext.strokeStyle = _oContext.fillStyle;
 
-          fillRoundedRect(_oContext, outerDarkX, outerDarkY, outerDarkSize, outerDarkSize, 30);
+          fillRoundedRect(_oContext, outerDarkX, outerDarkY, outerDarkSize, outerDarkSize);
 
           // Clear unnecessary fill part inside the rounded rectangle
           if (_htOption.backgroundColor) {
             _oContext.fillStyle = _htOption.backgroundColor;
             _oContext.strokeStyle = _oContext.fillStyle;
-            fillRoundedRect(
-              _oContext,
-              innerLightX,
-              innerLightY,
-              innerLightSize,
-              innerLightSize,
-              30
-            );
+            fillRoundedRect(_oContext, innerLightX, innerLightY, innerLightSize, innerLightSize);
           } else {
-            clearRoundedRect(
-              _oContext,
-              innerLightX,
-              innerLightY,
-              innerLightSize,
-              innerLightSize,
-              30
-            );
+            clearRoundedRect(_oContext, innerLightX, innerLightY, innerLightSize, innerLightSize);
           }
 
           // Draw fill rounded rectangle for the inner position
           _oContext.fillStyle = innerDarkColor;
           _oContext.strokeStyle = _oContext.fillStyle;
-          const innerDarkRadius = innerDarkSize === nWidth ? 10 : 30;
-          fillRoundedRect(
-            _oContext,
-            innerDarkX,
-            innerDarkY,
-            innerDarkSize,
-            innerDarkSize,
-            innerDarkRadius
-          );
+          fillRoundedRect(_oContext, innerDarkX, innerDarkY, innerDarkSize, innerDarkSize);
           break;
         }
         case "circle":

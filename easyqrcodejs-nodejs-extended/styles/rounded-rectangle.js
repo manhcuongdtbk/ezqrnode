@@ -7,15 +7,16 @@
  * @param {Number} y The top left y coordinate
  * @param {Number} width The width of the rectangle
  * @param {Number} height The height of the rectangle
- * @param {Number} [radius = 5] The corner radius; It can also be an object
+ * @param {Number} [radius = 30] The corner radius; It can also be an object
  *                 to specify different radii for corners
  * @param {Number} [radius.tl = 0] Top left
  * @param {Number} [radius.tr = 0] Top right
  * @param {Number} [radius.br = 0] Bottom right
  * @param {Number} [radius.bl = 0] Bottom left
  */
-function fillRoundedRect(ctx, x, y, width, height, radius = 5) {
+function fillRoundedRect(ctx, x, y, width, height, radius = 30) {
   if (typeof radius === "number") {
+    radius = (width * radius) / 100; // Responsive radius
     radius = { tl: radius, tr: radius, br: radius, bl: radius };
   } else {
     const defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
@@ -23,6 +24,14 @@ function fillRoundedRect(ctx, x, y, width, height, radius = 5) {
     defaultRadius.forEach(side => {
       radius[side] = radius[side] || defaultRadius[side];
     });
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const side in defaultRadius) {
+      if (Object.prototype.hasOwnProperty.call(defaultRadius, side)) {
+        // eslint-disable-next-line no-param-reassign
+        radius[side] = radius[side] || defaultRadius[side];
+      }
+    }
   }
 
   ctx.beginPath();

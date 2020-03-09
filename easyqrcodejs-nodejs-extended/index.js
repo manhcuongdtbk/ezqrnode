@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const { QRCodeLimitLength, QRErrorCorrectLevel } = require("./core/constants");
 const QRMath = require("./core/qr-math");
 const QRCodeModel = require("./core/qr-code-model");
@@ -155,7 +156,10 @@ class QRCode {
       alignmentStyle: "rectangle", // "rectangle", "roundedRectangle", "circle"
 
       // ==== Degree Rotation
-      degreeRotation: 0 // 0, 90, 180, 270
+      degreeRotation: 0, // 0, 90, 180, 270
+
+      // ==== Visualead mode
+      visualeadMode: false
     };
 
     if (typeof vOption === "string") {
@@ -186,6 +190,15 @@ class QRCode {
           vOption[option] = Number(vOption[option]);
         }
       });
+
+      const visualeadColorDark = ["#000000", "#841212", "#371866", "#605310", "#0E6614", "#0F4F43"];
+
+      if (vOption.visualeadMode) {
+        vOption.quietZoneSize = 1;
+        vOption.quietZoneSizeUnit = "module";
+        vOption.quietZoneColor = "transparent";
+        vOption.backgroundColor = null;
+      }
 
       Object.assign(this._htOption, vOption);
     }

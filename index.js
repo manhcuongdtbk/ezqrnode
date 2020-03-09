@@ -3,7 +3,6 @@ const QRCode = require("./easyqrcodejs-nodejs-extended/");
 exports.handler = async event => {
   const options = event.queryStringParameters;
   const { token } = event.queryStringParameters;
-  console.log(token);
   delete options.token;
   let response = null;
   const headers = {

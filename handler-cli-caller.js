@@ -7,14 +7,12 @@ const fixedText = "cuong.bui@tomosia.com";
 const options = {
   text: randomText,
   dotScale: "0.5",
-  // colorDark: "black",
-  // colorLight: "white",
+  // colorDark: "lightsalmon",
+  // colorLight: "peachpuff",
   dotStyle: "roundedRectangle",
   timingStyle: "roundedRectangle",
-  positionStyle: "roundedRectangle",
-  alignmentStyle: "roundedRectangle",
-  // AO: "purple",
-  // AI: "brown",
+  positionStyle: "circle",
+  alignmentStyle: "circle",
   // version: "7",
   // correctLevel: QRCode.CorrectLevel.H,
   // backgroundImage: "testImage.jpg",
@@ -25,12 +23,15 @@ const options = {
   // PI_TR: "blue",
   // PO_BL: "cyan",
   // PI_BL: "orange",
+  // AO: "purple",
+  // AI: "brown",
   quietZoneSize: 1,
   quietZoneSizeUnit: "module",
   quietZoneColor: "red",
-  backgroundColor: "white",
+  backgroundColor: "grey",
   token: "b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b",
-  logoPlaceholder: true
+  logoPlaceholder: true,
+  visualeadMode: true
 };
 
 const eventEmulator = { queryStringParameters: options };

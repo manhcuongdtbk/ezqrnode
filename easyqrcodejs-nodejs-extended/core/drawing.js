@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const { createCanvas, Image } = require("canvas");
 const fs = require("fs");
 const { QRErrorCorrectLevel } = require("./constants");
@@ -100,102 +101,14 @@ class Drawing {
       );
     }
 
-    function drawEye(
-      outerDarkX,
-      outerDarkY,
-      outerDarkSize,
-      outerDarkColor,
-      innerDarkColor,
-      styleType
-    ) {
-      const innerLightX = outerDarkX + nWidth;
-      const innerLightY = outerDarkY + nHeight;
-      const innerDarkX = innerLightX + nWidth;
-      const innerDarkY = innerLightY + nWidth;
-      const eyeEdgeSize = nWidth * 2;
-      const innerLightSize = outerDarkSize - eyeEdgeSize;
-      const innerDarkSize = innerLightSize - eyeEdgeSize;
-
-      _oContext.lineWidth = 0;
-
+    function drawShape(x, y, width, height, styleType, scale = 1, context) {
       // eslint-disable-next-line default-case
       switch (styleType) {
-        case "rectangle":
-          // Draw fill rectangle for the outer position
-          _oContext.fillStyle = outerDarkColor;
-          _oContext.strokeStyle = _oContext.fillStyle;
-          _oContext.fillRect(outerDarkX, outerDarkY, outerDarkSize, outerDarkSize);
-
-          // Clear unnecessary fill part inside the rectangle
-          if (_htOption.backgroundColor) {
-            _oContext.fillStyle = _htOption.backgroundColor;
-            _oContext.strokeStyle = _oContext.fillStyle;
-            _oContext.fillRect(innerLightX, innerLightY, innerLightSize, innerLightSize);
-          } else {
-            _oContext.clearRect(innerLightX, innerLightY, innerLightSize, innerLightSize);
-          }
-
-          // Draw fill rectangle for the inner position
-          _oContext.fillStyle = innerDarkColor;
-          _oContext.strokeStyle = _oContext.fillStyle;
-          _oContext.fillRect(innerDarkX, innerDarkY, innerDarkSize, innerDarkSize);
-          break;
-        case "roundedRectangle": {
-          // Best on 1000px width and 1000 px height
-
-          // Draw fill rounded rectangle for the outer position
-          _oContext.fillStyle = outerDarkColor;
-          _oContext.strokeStyle = _oContext.fillStyle;
-
-          fillRoundedRect(_oContext, outerDarkX, outerDarkY, outerDarkSize, outerDarkSize);
-
-          // Clear unnecessary fill part inside the rounded rectangle
-          if (_htOption.backgroundColor) {
-            _oContext.fillStyle = _htOption.backgroundColor;
-            _oContext.strokeStyle = _oContext.fillStyle;
-            fillRoundedRect(_oContext, innerLightX, innerLightY, innerLightSize, innerLightSize);
-          } else {
-            clearRoundedRect(_oContext, innerLightX, innerLightY, innerLightSize, innerLightSize);
-          }
-
-          // Draw fill rounded rectangle for the inner position
-          _oContext.fillStyle = innerDarkColor;
-          _oContext.strokeStyle = _oContext.fillStyle;
-          fillRoundedRect(_oContext, innerDarkX, innerDarkY, innerDarkSize, innerDarkSize);
-          break;
-        }
-        case "circle":
-          // Draw circle for the outer position
-          _oContext.fillStyle = outerDarkColor;
-          _oContext.strokeStyle = _oContext.fillStyle;
-          fillCircle(_oContext, outerDarkX, outerDarkY, outerDarkSize);
-
-          // Clear unnecessary fill part inside the circle
-          if (_htOption.backgroundColor) {
-            _oContext.fillStyle = _htOption.backgroundColor;
-            _oContext.strokeStyle = _oContext.fillStyle;
-            fillCircle(_oContext, innerLightX, innerLightY, innerLightSize);
-          } else {
-            clearCircle(_oContext, innerLightX, innerLightY, innerLightSize);
-          }
-
-          // Draw circle for the inner position
-          _oContext.fillStyle = innerDarkColor;
-          _oContext.strokeStyle = _oContext.fillStyle;
-          fillCircle(_oContext, innerDarkX, innerDarkY, innerDarkSize);
-          break;
-      }
-    }
-
-    function drawDataModule(x, y, width, height, styleType, scale = 1, context) {
-      // eslint-disable-next-line default-case
-      switch (styleType) {
-        case "roundedRectangle":
-          // Best on 1000px width and 1000 px height
-          fillRoundedRect(context, x, y, width, height);
-          break;
         case "rectangle":
           context.fillRect(x, y, width, height);
+          break;
+        case "roundedRectangle":
+          fillRoundedRect(context, x, y, width, height);
           break;
         case "circle":
           fillCircle(context, x, y, width);
@@ -214,9 +127,105 @@ class Drawing {
       }
     }
 
-    const logoPlaceholderModules = [];
+    function clearShape(x, y, width, height, styleType, context) {
+      // eslint-disable-next-line default-case
+      switch (styleType) {
+        case "rectangle":
+          context.clearRect(x, y, width, height);
+          break;
+        case "roundedRectangle":
+          clearRoundedRect(context, x, y, width, height);
+          break;
+        case "circle":
+          clearCircle(context, x, y, width);
+          break;
+      }
+    }
 
-    const drawQrcode = () => {
+    function drawEye(
+      outerDarkX,
+      outerDarkY,
+      outerDarkSize,
+      outerDarkColor,
+      innerDarkColor,
+      styleType,
+      isDrawOuterLight
+    ) {
+      const innerLightX = outerDarkX + nWidth;
+      const innerLightY = outerDarkY + nHeight;
+      const innerDarkX = innerLightX + nWidth;
+      const innerDarkY = innerLightY + nWidth;
+      const eyeEdgeSize = nWidth * 2;
+      const innerLightSize = outerDarkSize - eyeEdgeSize;
+      const innerDarkSize = innerLightSize - eyeEdgeSize;
+      const outerLightX = outerDarkX - nWidth;
+      const outerLightY = outerDarkY - nWidth;
+      const outerLightSize = outerDarkSize + eyeEdgeSize;
+      const outerLightColor = "rgba(255, 255, 255, 0.7)";
+
+      _oContext.lineWidth = 0;
+
+      // Outer Light
+      if (isDrawOuterLight) {
+        _oContext.fillStyle = outerLightColor;
+        _oContext.strokeStyle = _oContext.fillStyle;
+        drawShape(
+          outerLightX,
+          outerLightY,
+          outerLightSize,
+          outerLightSize,
+          styleType,
+          1,
+          _oContext
+        );
+        clearShape(outerDarkX, outerDarkY, outerDarkSize, outerDarkSize, styleType, _oContext);
+      }
+
+      // Outer Dark
+      _oContext.fillStyle = outerDarkColor;
+      _oContext.strokeStyle = _oContext.fillStyle;
+      drawShape(outerDarkX, outerDarkY, outerDarkSize, outerDarkSize, styleType, 1, _oContext);
+
+      // Inner Light
+      if (_htOption.backgroundColor) {
+        _oContext.fillStyle = _htOption.backgroundColor;
+        _oContext.strokeStyle = _oContext.fillStyle;
+        drawShape(
+          innerLightX,
+          innerLightY,
+          innerLightSize,
+          innerLightSize,
+          styleType,
+          1,
+          _oContext
+        );
+        clearShape(innerDarkX, innerDarkY, innerDarkSize, innerDarkSize, styleType, _oContext);
+      } else if (_htOption.visualeadMode) {
+        _oContext.fillStyle = outerLightColor;
+        _oContext.strokeStyle = _oContext.fillStyle;
+        drawShape(
+          innerLightX,
+          innerLightY,
+          innerLightSize,
+          innerLightSize,
+          styleType,
+          1,
+          _oContext
+        );
+        clearShape(innerDarkX, innerDarkY, innerDarkSize, innerDarkSize, styleType, _oContext);
+      } else {
+        clearShape(innerLightX, innerLightY, innerLightSize, innerLightSize, styleType, _oContext);
+      }
+
+      // Inner Dark
+      _oContext.fillStyle = innerDarkColor;
+      _oContext.strokeStyle = _oContext.fillStyle;
+      drawShape(innerDarkX, innerDarkY, innerDarkSize, innerDarkSize, styleType, 1, _oContext);
+    }
+
+    function setupPlaceHolder() {
+      const logoPlaceholderModules = [];
+
       if (_htOption.logoPlaceholder && !_htOption.logo) {
         // Error correction percentage, based on error correction level
         let correctPercent = null;
@@ -302,6 +311,12 @@ class Drawing {
         }
       }
 
+      return logoPlaceholderModules;
+    }
+
+    const drawQrcode = () => {
+      const logoPlaceholderModules = setupPlaceHolder();
+
       for (let row = 0; row < nCount; row += 1) {
         for (let col = 0; col < nCount; col += 1) {
           if (
@@ -320,60 +335,68 @@ class Drawing {
 
           if (eye) {
             const eyeType = eye.type;
-            let eyeSize = null;
             let outerDarkColor = null;
             let innerDarkColor = null;
-            let styleType = null;
-            let remainingEyeColumn = null;
+
+            // Common for "POD_TL_TLC", "POD_TR_TLC", "POD_BL_TLC" eyeType
+            let eyeSize = nWidth * 7;
+            let styleType = _htOption.positionStyle;
+            let remainingEyeColumn = _htOption.visualeadMode ? 7 : 6;
 
             // Draw the whole position outer and inner
             if (eyeType) {
-              if (
-                eyeType === "POD_TL_TLC" ||
-                eyeType === "POD_TR_TLC" ||
-                eyeType === "POD_BL_TLC" ||
-                eyeType === "AOD_TLC"
-              ) {
-                // eslint-disable-next-line default-case
-                switch (eyeType) {
-                  case "POD_TL_TLC":
-                    outerDarkColor = _htOption.PO_TL || _htOption.PO || _htOption.colorDark;
-                    innerDarkColor = _htOption.PI_TL || _htOption.PI || _htOption.colorDark;
-                    break;
-                  case "POD_TR_TLC":
-                    outerDarkColor = _htOption.PO_TR || _htOption.PO || _htOption.colorDark;
-                    innerDarkColor = _htOption.PI_TR || _htOption.PI || _htOption.colorDark;
-                    break;
-                  case "POD_BL_TLC":
-                    outerDarkColor = _htOption.PO_BL || _htOption.PO || _htOption.colorDark;
-                    innerDarkColor = _htOption.PI_BL || _htOption.PI || _htOption.colorDark;
-                    break;
-                  case "AOD_TLC":
-                    // Current QRCode version
-                    // console.log(oQRCode.typeNumber)
-                    outerDarkColor = _htOption.AO || _htOption.colorDark;
-                    innerDarkColor = _htOption.AI || _htOption.colorDark;
-                    eyeSize = nWidth * 5;
-                    styleType = _htOption.alignmentStyle;
-                    remainingEyeColumn = 4;
-                    break;
-                }
+              if (eyeType === "POD_TL_TLC") {
+                outerDarkColor = _htOption.PO_TL || _htOption.PO || _htOption.colorDark;
+                innerDarkColor = _htOption.PI_TL || _htOption.PI || _htOption.colorDark;
 
-                // eslint-disable-next-line default-case
-                switch (eyeType) {
-                  case "POD_TL_TLC":
-                  case "POD_TR_TLC":
-                  case "POD_BL_TLC":
-                    eyeSize = nWidth * 7;
-                    styleType = _htOption.positionStyle;
-                    remainingEyeColumn = 6;
-                    break;
-                }
+                drawEye(
+                  nLeft,
+                  nTop,
+                  eyeSize,
+                  outerDarkColor,
+                  innerDarkColor,
+                  styleType,
+                  _htOption.visualeadMode
+                );
+              } else if (eyeType === "POD_TR_TLC") {
+                outerDarkColor = _htOption.PO_TR || _htOption.PO || _htOption.colorDark;
+                innerDarkColor = _htOption.PI_TR || _htOption.PI || _htOption.colorDark;
+
+                drawEye(
+                  nLeft,
+                  nTop,
+                  eyeSize,
+                  outerDarkColor,
+                  innerDarkColor,
+                  styleType,
+                  _htOption.visualeadMode
+                );
+              } else if (eyeType === "POD_BL_TLC") {
+                outerDarkColor = _htOption.PO_BL || _htOption.PO || _htOption.colorDark;
+                innerDarkColor = _htOption.PI_BL || _htOption.PI || _htOption.colorDark;
+
+                drawEye(
+                  nLeft,
+                  nTop,
+                  eyeSize,
+                  outerDarkColor,
+                  innerDarkColor,
+                  styleType,
+                  _htOption.visualeadMode
+                );
+              } else if (eyeType === "AOD_TLC") {
+                // Current QRCode version
+                // console.log(oQRCode.typeNumber)
+                outerDarkColor = _htOption.AO || _htOption.colorDark;
+                innerDarkColor = _htOption.AI || _htOption.colorDark;
+                eyeSize = nWidth * 5;
+                styleType = _htOption.alignmentStyle;
+                remainingEyeColumn = 4;
 
                 drawEye(nLeft, nTop, eyeSize, outerDarkColor, innerDarkColor, styleType);
               } else if (eyeType === "POD_TL" || eyeType === "POD_TR" || eyeType === "POD_BL") {
-                remainingEyeColumn = 6;
-              } else if (eyeType === "AOD") {
+                remainingEyeColumn = _htOption.visualeadMode ? 7 : 6;
+              } else if (eyeType === "AOD" || eyeType === "AOD_BLC") {
                 remainingEyeColumn = 4;
               }
 
@@ -383,6 +406,17 @@ class Drawing {
           }
           // Draw timing module and data module
           else {
+            // Skip outerLight when visualeadMode is true
+            if (
+              _htOption.visualeadMode &&
+              (((row === 7 || row === nCount - 8) && [...Array(8).keys()].includes(col)) ||
+                ([...Array(8).keys()].includes(row) && col === nCount - 8) ||
+                // eslint-disable-next-line prettier/prettier
+               (row === 7 && [...Array(9).keys()].slice(1).map(x => nCount - x).includes(col)))
+            ) {
+              continue;
+            }
+
             // Top left coordinate of the dot
             const dotX = nLeft + (nWidth * (1 - _htOption.dotScale)) / 2;
             const dotY = nTop + (nHeight * (1 - _htOption.dotScale)) / 2;
@@ -427,15 +461,7 @@ class Drawing {
               styleType = _htOption.dotStyle;
             }
 
-            drawDataModule(
-              dotX,
-              dotY,
-              dotWidth,
-              dotHeight,
-              styleType,
-              _htOption.dotScale,
-              _oContext
-            );
+            drawShape(dotX, dotY, dotWidth, dotHeight, styleType, _htOption.dotScale, _oContext);
           }
 
           if (_htOption.dotScale !== 1 && !eye) {

@@ -3,10 +3,10 @@ const { createCanvas, Image } = require("canvas");
 const fs = require("fs");
 const { QRErrorCorrectLevel } = require("./constants");
 // Custom dot styles
-const fillRoundedRect = require("../styles/rounded-rectangle");
+const fillRounded = require("../styles/rounded");
 const fillCircle = require("../styles/circle");
 const fillStar = require("../styles/star");
-const clearRoundedRect = require("../styles/clear-rounded-rectangle");
+const clearRounded = require("../styles/clear-rounded");
 const clearCircle = require("../styles/clear-circle");
 
 class Drawing {
@@ -104,16 +104,16 @@ class Drawing {
     function drawShape(x, y, width, height, styleType, scale = 1, context) {
       // eslint-disable-next-line default-case
       switch (styleType) {
-        case "rectangle":
+        case 1:
           context.fillRect(x, y, width, height);
           break;
-        case "roundedRectangle":
-          fillRoundedRect(context, x, y, width, height);
+        case 2:
+          fillRounded(context, x, y, width, height);
           break;
-        case "circle":
+        case 3:
           fillCircle(context, x, y, width);
           break;
-        case "star":
+        case 4:
           // Only support dotScale 0.5
           fillStar(
             context,
@@ -130,13 +130,13 @@ class Drawing {
     function clearShape(x, y, width, height, styleType, context) {
       // eslint-disable-next-line default-case
       switch (styleType) {
-        case "rectangle":
+        case 1:
           context.clearRect(x, y, width, height);
           break;
-        case "roundedRectangle":
-          clearRoundedRect(context, x, y, width, height);
+        case 2:
+          clearRounded(context, x, y, width, height);
           break;
-        case "circle":
+        case 3:
           clearCircle(context, x, y, width);
           break;
       }

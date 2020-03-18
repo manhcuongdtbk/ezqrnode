@@ -70,7 +70,7 @@ var qrcode = new QRCode(options);
   | **backgroundColor** | N | String | `null` | Background CSS color |
   | **correctLevel** | N | Enum | `QRCode.CorrectLevel.H` | `QRCode.CorrectLevel.H`<br/>`QRCode.CorrectLevel.Q` <br/> `QRCode.CorrectLevel.M` <br/> `QRCode.CorrectLevel.L`|
   | **dotScale** | N | Number | `1.0` |Dot style required Patterns. Ranges: `0-1.0` |
-  | **dotStyle** | N | String | `rectangle` | `rectangle`<br/>`roundedRectangle`<br/>`circle` |
+  | **dotStyle** | N | String | `1` | `1 (rectangle)`<br/>`2 (roundedRectangle)`<br/>`3 (circle)`<br/>`4 (star)` |
     | Quiet Zone| --- | ---|---|---|
     | **quietZoneSize** | N | Number | `0` |  Quiet Zone size |
     | **quietZoneSizeUnit** | N | String | `pixel` |  Quiet Zone size unit<br/>`pixel`<br/>`module` |
@@ -96,11 +96,11 @@ var qrcode = new QRCode(options);
   | **PO_BL** | N | String | `undefined` | Posotion Outer CSS color - Bottom Left |
   | **PI_BL** | N | String | `undefined` | Posotion Inner CSS color - Bottom Left |
   | Timing Style| --- | ---|---|---|
-  | **timingStyle** | N | String | `rectangle` | Style of the timing pattern<br/>`rectangle`<br/>`roundedRectangle`
+  | **timingStyle** | N | String | `1` | Style of the timing pattern<br/>`1 (rectangle)`<br/>`2 (roundedRectangle)`<br/>`3 (circle)`<br/>`4 (star)`
   | Position Style| --- | ---|---|---|
-  | **positionStyle** | N | String | `rectangle` | Style of the position pattern<br/>`rectangle`<br/>`roundedRectangle`<br/>`circle`
+  | **positionStyle** | N | String | `1` | Style of the position pattern<br/>`1 (rectangle)`<br/>`2 (roundedRectangle)`<br/>`3 (circle)`
   | Alignment Style| --- | ---|---|---|
-  | **alignmentStyle** | N | String | `rectangle` | Style of the alignment pattern<br/>`rectangle`<br/>`roundedRectangle`<br/>`circle`
+  | **alignmentStyle** | N | String | `1` | Style of the alignment pattern<br/>`1 (rectangle)`<br/>`2 (roundedRectangle)`<br/>`3 (circle)`<br/>
   | Alignment Color options| --- |--- |---|---|
   | **AO** | N | String | `undefined` | Alignment Outer CSS color. if not set, the defaut is `colorDark` |
   | **AI** | N | String | `undefined` | Alignment Inner CSS color. if not set, the defaut is `colorDark` |
@@ -210,4 +210,4 @@ Always set up AWS Lambda Function in the following order:
 
 - Access URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&enter-params-here>
 - Token: **b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b**
-- Sample URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?text=cuongbuitomosia&width=1200&height=1200&dotScale=0.5&degreeRotation=270&positionStyle=roundedRectangle&alignmentStyle=roundedRectangle&timingStyle=roundedRectangle&dotStyle=roundedRectangle&token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&quietZoneSize=1&quietZoneSizeUnit=module&quietZoneColor=red&backgroundColor=grey&logoPlaceholder=true&visualeadMode=true>
+- Sample URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?text=cuongbuitomosia&width=1200&height=1200&dotScale=0.5&degreeRotation=270&positionStyle=2&alignmentStyle=2&timingStyle=2&dotStyle=2&token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&quietZoneSize=1&quietZoneSizeUnit=module&quietZoneColor=red&backgroundColor=grey&logoPlaceholder=true&visualeadMode=true>

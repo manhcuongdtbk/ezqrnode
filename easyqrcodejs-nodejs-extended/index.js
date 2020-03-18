@@ -144,16 +144,16 @@ class QRCode {
       version: 0, // The symbol versions of QR Code range from Version 1 to Version 40. default 0 means automatically choose the closest version based on the text length.
 
       // ==== Dot Style
-      dotStyle: "rectangle", // "rectangle", "roundedRectangle", "circle", "star"
+      dotStyle: 1, // 1: square, 2: rounded, 3: circle, 4: star
 
       // ==== Timing style
-      timingStyle: "rectangle", // "rectangle", "roundedRectangle", "circle", "star"
+      timingStyle: 1, // 1: square, 2: rounded, 3: circle, 4: star
 
       // ==== Position style
-      positionStyle: "rectangle", // "rectangle", "roundedRectangle", "circle"
+      positionStyle: 1, // 1: square, 2: rounded, 3: circle
 
       // ==== Alignment style
-      alignmentStyle: "rectangle", // "rectangle", "roundedRectangle", "circle"
+      alignmentStyle: 1, // 1: square, 2: rounded, 3: circle
 
       // ==== Degree Rotation
       degreeRotation: 0, // 0, 90, 180, 270
@@ -179,7 +179,11 @@ class QRCode {
       "compressionLevel",
       "quality",
       "version",
-      "degreeRotation"
+      "degreeRotation",
+      "dotStyle",
+      "timingStyle",
+      "positionStyle",
+      "alignmentStyle"
     ]);
 
     // Overwrites options
@@ -198,6 +202,7 @@ class QRCode {
         vOption.quietZoneSizeUnit = "module";
         vOption.quietZoneColor = "transparent";
         vOption.backgroundColor = null;
+        vOption.dotScale = 0.5;
       }
 
       Object.assign(this._htOption, vOption);
@@ -265,52 +270,30 @@ class QRCode {
       this._htOption.backgroundImageAlpha = 1;
     }
 
-    if (
-      this._htOption.dotStyle !== "rectangle" &&
-      this._htOption.dotStyle !== "roundedRectangle" &&
-      this._htOption.dotStyle !== "circle" &&
-      this._htOption.dotStyle !== "star"
-    ) {
-      console.warn(`Dot style '${this._htOption.dotStyle}' is invalidate, reset to 'rectangle'`);
+    const shapeNumber = [1, 2, 3, 4];
 
-      this._htOption.dotStyle = "rectangle";
+    if (!shapeNumber.includes(this._htOption.dotStyle)) {
+      console.warn(`Dot style '${this._htOption.dotStyle}' is invalidate, reset to '1'`);
+
+      this._htOption.dotStyle = 1;
     }
 
-    if (
-      this._htOption.timingStyle !== "rectangle" &&
-      this._htOption.timingStyle !== "roundedRectangle" &&
-      this._htOption.timingStyle !== "circle" &&
-      this._htOption.timingStyle !== "star"
-    ) {
-      console.warn(
-        `Timing style '${this._htOption.timingStyle}' is invalidate, reset to 'rectangle'`
-      );
+    if (!shapeNumber.includes(this._htOption.timingStyle)) {
+      console.warn(`Timing style '${this._htOption.timingStyle}' is invalidate, reset to 1`);
 
-      this._htOption.timingStyle = "rectangle";
+      this._htOption.timingStyle = 1;
     }
 
-    if (
-      this._htOption.positionStyle !== "rectangle" &&
-      this._htOption.positionStyle !== "roundedRectangle" &&
-      this._htOption.positionStyle !== "circle"
-    ) {
-      console.warn(
-        `Position style '${this._htOption.positionStyle}' is invalidate, reset to 'rectangle'`
-      );
+    if (!shapeNumber.slice(0, shapeNumber.length - 1).includes(this._htOption.positionStyle)) {
+      console.warn(`Position style '${this._htOption.positionStyle}' is invalidate, reset to 1`);
 
-      this._htOption.positionStyle = "rectangle";
+      this._htOption.positionStyle = 1;
     }
 
-    if (
-      this._htOption.alignmentStyle !== "rectangle" &&
-      this._htOption.alignmentStyle !== "roundedRectangle" &&
-      this._htOption.alignmentStyle !== "circle"
-    ) {
-      console.warn(
-        `Alignment style '${this._htOption.alignmentStyle}' is invalidate, reset to 'rectangle'`
-      );
+    if (!shapeNumber.slice(0, shapeNumber.length - 1).includes(this._htOption.alignmentStyle)) {
+      console.warn(`Alignment style '${this._htOption.alignmentStyle}' is invalidate, reset to 1`);
 
-      this._htOption.alignmentStyle = "rectangle";
+      this._htOption.alignmentStyle = 1;
     }
 
     this._oQRCode = null;

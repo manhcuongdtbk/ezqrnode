@@ -14,7 +14,7 @@
  * @param {Number} [radius.br = 0] Bottom right
  * @param {Number} [radius.bl = 0] Bottom left
  */
-function fillRoundedRect(ctx, x, y, width, height, radius = 30) {
+function fillRounded(ctx, x, y, width, height, radius = 30) {
   if (typeof radius === "number") {
     radius = (width * radius) / 100; // Responsive radius
     radius = { tl: radius, tr: radius, br: radius, bl: radius };
@@ -50,4 +50,4 @@ function fillRoundedRect(ctx, x, y, width, height, radius = 30) {
   return ctx;
 }
 
-module.exports = fillRoundedRect;
+module.exports = fillRounded;

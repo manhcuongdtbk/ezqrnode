@@ -190,6 +190,8 @@ The zip file will be in the same folder with the ezqrnode development folder, na
 
 ## PRODUCTION
 
+### AWS Lambda Function Setup
+
 Always set up AWS Lambda Function in the following order:
 
 - Main function **ezqrnode.zip**
@@ -203,3 +205,9 @@ Always set up AWS Lambda Function in the following order:
 - Node12Canvas layer contains the node _canvas_ package version 2.6.1. It's the required package to draw the QR Code. You can not use something like a Mac OS / Windows generated node_mudles package because its binary files will not compatible with Amazon's custom AMI
 
 - CanvasLib64 layer contains the missing libraries for node _canvas_ to run on Amazon's custom AMI. Without them, you will receive "libuuid.so.1: cannot open shared object file: No such file or directory" error message
+
+### AWS API Gateway Access
+
+- Access URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&enter-params-here>
+- Token: **b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b**
+- Sample URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?text=cuongbuitomosia&width=1200&height=1200&dotScale=0.5&degreeRotation=270&positionStyle=roundedRectangle&alignmentStyle=roundedRectangle&timingStyle=roundedRectangle&dotStyle=roundedRectangle&token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&quietZoneSize=1&quietZoneSizeUnit=module&quietZoneColor=red&backgroundColor=grey&logoPlaceholder=true&visualeadMode=true>

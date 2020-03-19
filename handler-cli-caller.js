@@ -6,6 +6,7 @@ const fixedText = "cuong.bui@tomosia.com";
 
 const options = {
   text: randomText,
+  size: 1200,
   dotScale: "0.5",
   // colorDark: "lightsalmon",
   // colorLight: "peachpuff",

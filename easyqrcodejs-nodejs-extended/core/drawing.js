@@ -32,17 +32,15 @@ class Drawing {
     const { _htOption } = this;
 
     const nCount = oQRCode.getModuleCount();
-    const nWidth = Math.round(_htOption.width / nCount);
-    const nHeight = Math.round(_htOption.height / nCount);
+    const nSize = Math.round(_htOption.size / nCount);
 
     if (_htOption.quietZoneSizeUnit === "module") {
-      _htOption.quietZoneSize *= nWidth;
+      _htOption.quietZoneSize *= nSize;
     }
 
-    this._htOption.width = nWidth * nCount;
-    this._htOption.height = nHeight * nCount;
-    this._canvas.width = this._htOption.width + this._htOption.quietZoneSize * 2;
-    this._canvas.height = this._htOption.height + this._htOption.quietZoneSize * 2;
+    this._htOption.size = nSize * nCount;
+    this._canvas.width = this._htOption.size + this._htOption.quietZoneSize * 2;
+    this._canvas.height = this._canvas.width;
 
     let autoColorDark = "rgba(0, 0, 0, .6)";
     let autoColorLight = "rgba(255, 255, 255, .7)";
@@ -96,8 +94,8 @@ class Drawing {
       _oContext.fillRect(
         _htOption.quietZoneSize,
         _htOption.quietZoneSize,
-        _htOption.width,
-        _htOption.height
+        _htOption.size,
+        _htOption.size
       );
     }
 
@@ -117,11 +115,11 @@ class Drawing {
           // Only support dotScale 0.5
           fillStar(
             context,
-            x + nWidth / 4,
-            y + nWidth / 4,
+            x + nSize / 4,
+            y + nSize / 4,
             4,
-            (nWidth * scale) / 2,
-            (nWidth * scale) / 4
+            (nSize * scale) / 2,
+            (nSize * scale) / 4
           );
           break;
       }
@@ -151,15 +149,15 @@ class Drawing {
       styleType,
       isDrawOuterLight
     ) {
-      const innerLightX = outerDarkX + nWidth;
-      const innerLightY = outerDarkY + nHeight;
-      const innerDarkX = innerLightX + nWidth;
-      const innerDarkY = innerLightY + nWidth;
-      const eyeEdgeSize = nWidth * 2;
+      const innerLightX = outerDarkX + nSize;
+      const innerLightY = outerDarkY + nSize;
+      const innerDarkX = innerLightX + nSize;
+      const innerDarkY = innerLightY + nSize;
+      const eyeEdgeSize = nSize * 2;
       const innerLightSize = outerDarkSize - eyeEdgeSize;
       const innerDarkSize = innerLightSize - eyeEdgeSize;
-      const outerLightX = outerDarkX - nWidth;
-      const outerLightY = outerDarkY - nWidth;
+      const outerLightX = outerDarkX - nSize;
+      const outerLightY = outerDarkY - nSize;
       const outerLightSize = outerDarkSize + eyeEdgeSize;
       const outerLightColor = "rgba(255, 255, 255, 0.7)";
 
@@ -283,18 +281,18 @@ class Drawing {
         // Calculate the top left corner's coordinate of the top left corner data module that forms
         // a blank space square around QR Module's center point.
         // Original explaination: https://math.stackexchange.com/a/1490157/756903
-        const centerPointX = (nCount / 2) * nWidth + _htOption.quietZoneSize;
-        const centerPointY = (nCount / 2) * nWidth + _htOption.quietZoneSize;
+        const centerPointX = (nCount / 2) * nSize + _htOption.quietZoneSize;
+        const centerPointY = (nCount / 2) * nSize + _htOption.quietZoneSize;
         const QRModuleCount = nCount * nCount;
         const placeholderModuleCount = QRModuleCount * correctPercent;
         const placeholderEdgeModuleCount = Math.floor(Math.sqrt(placeholderModuleCount));
-        const placeholderEdgeWidth = placeholderEdgeModuleCount * nWidth;
+        const placeholderEdgeWidth = placeholderEdgeModuleCount * nSize;
         const placeholderTLCX = centerPointX - placeholderEdgeWidth / 2; // Top left corner X coordinate
         const placeholderTLCY = centerPointY - placeholderEdgeWidth / 2; // Top left corner Y coordinate
         const placeholderTLCrow =
-          Math.floor((placeholderTLCX - _htOption.quietZoneSize) / nWidth) + 1;
+          Math.floor((placeholderTLCX - _htOption.quietZoneSize) / nSize) + 1;
         const placeholderTLCcolumn =
-          Math.floor((placeholderTLCY - _htOption.quietZoneSize) / nWidth) + 1;
+          Math.floor((placeholderTLCY - _htOption.quietZoneSize) / nSize) + 1;
 
         for (
           let row = placeholderTLCrow + complementaryModuleCount;
@@ -328,8 +326,8 @@ class Drawing {
             continue;
           }
 
-          const nLeft = col * nWidth + _htOption.quietZoneSize;
-          const nTop = row * nHeight + _htOption.quietZoneSize;
+          const nLeft = col * nSize + _htOption.quietZoneSize;
+          const nTop = row * nSize + _htOption.quietZoneSize;
           const bIsDark = oQRCode.isDark(row, col);
           const eye = oQRCode.getEye(row, col);
 
@@ -339,7 +337,7 @@ class Drawing {
             let innerDarkColor = null;
 
             // Common for "POD_TL_TLC", "POD_TR_TLC", "POD_BL_TLC" eyeType
-            let eyeSize = nWidth * 7;
+            let eyeSize = nSize * 7;
             let styleType = _htOption.positionStyle;
             let remainingEyeColumn = _htOption.visualeadMode ? 7 : 6;
 
@@ -389,7 +387,7 @@ class Drawing {
                 // console.log(oQRCode.typeNumber)
                 outerDarkColor = _htOption.AO || _htOption.colorDark;
                 innerDarkColor = _htOption.AI || _htOption.colorDark;
-                eyeSize = nWidth * 5;
+                eyeSize = nSize * 5;
                 styleType = _htOption.alignmentStyle;
                 remainingEyeColumn = 4;
 
@@ -418,10 +416,10 @@ class Drawing {
             }
 
             // Top left coordinate of the dot
-            const dotX = nLeft + (nWidth * (1 - _htOption.dotScale)) / 2;
-            const dotY = nTop + (nHeight * (1 - _htOption.dotScale)) / 2;
-            const dotWidth = nWidth * _htOption.dotScale;
-            const dotHeight = nHeight * _htOption.dotScale;
+            const dotX = nLeft + (nSize * (1 - _htOption.dotScale)) / 2;
+            const dotY = nTop + (nSize * (1 - _htOption.dotScale)) / 2;
+            const dotWidth = nSize * _htOption.dotScale;
+            const dotHeight = dotWidth;
             let styleType = null;
 
             // Draw dot background to increase contrast on hard to see position in the background image
@@ -429,7 +427,7 @@ class Drawing {
             const dotBackgroundLightColor = "rgba(255, 255, 255, 0.435)";
             _oContext.fillStyle = bIsDark ? dotBackgroundDarkColor : dotBackgroundLightColor;
             _oContext.strokeStyle = _oContext.fillStyle;
-            _oContext.fillRect(nLeft, nTop, nWidth, nHeight);
+            _oContext.fillRect(nLeft, nTop, nSize, nSize);
 
             // TODO: change to appropriate color
             _oContext.lineWidth = 0;
@@ -475,8 +473,8 @@ class Drawing {
         img.src = _htOption.logo;
 
         const genratorImg = () => {
-          let imgW = Math.round(_htOption.width / 3.5);
-          let imgH = Math.round(_htOption.height / 3.5);
+          let imgW = Math.round(_htOption.nSize / 3.5);
+          let imgH = imgW;
 
           if (imgW !== imgH) {
             imgW = imgH;
@@ -498,8 +496,8 @@ class Drawing {
             _oContext.fillStyle = _htOption.logoBackgroundColor;
 
             _oContext.fillRect(
-              (_htOption.width + _htOption.quietZoneSize * 2 - imgW) / 2,
-              (_htOption.height + _htOption.quietZoneSize * 2 - imgH) / 2,
+              (_htOption.nSize + _htOption.quietZoneSize * 2 - imgW) / 2,
+              (_htOption.nSize + _htOption.quietZoneSize * 2 - imgH) / 2,
               imgW,
               imgW
             );
@@ -507,8 +505,8 @@ class Drawing {
 
           _oContext.drawImage(
             img,
-            (_htOption.width + _htOption.quietZoneSize * 2 - imgW) / 2,
-            (_htOption.height + _htOption.quietZoneSize * 2 - imgH) / 2,
+            (_htOption.nSize + _htOption.quietZoneSize * 2 - imgW) / 2,
+            (_htOption.nSize + _htOption.quietZoneSize * 2 - imgH) / 2,
             imgW,
             imgH
           );
@@ -556,8 +554,8 @@ class Drawing {
           bgImg,
           0,
           0,
-          _htOption.width + _htOption.quietZoneSize * 2,
-          _htOption.height + _htOption.quietZoneSize * 2
+          _htOption.nSize + _htOption.quietZoneSize * 2,
+          _htOption.nSize + _htOption.quietZoneSize * 2
         );
         _oContext.globalAlpha = 1;
         drawQrcode();

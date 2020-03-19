@@ -50,8 +50,7 @@ var qrcode = new QRCode(options);
    var options = {
       // ====== Basic
       text: "cuong.bui@tomosia.com",
-      width: 256,
-      height: 256,
+      size: 1200,
       colorDark : "#000000",
       colorLight : "#ffffff",
       correctLevel : QRCode.CorrectLevel.H, // L, M, Q, H
@@ -63,8 +62,7 @@ var qrcode = new QRCode(options);
   | --- | --- |--- | --- |--- |
   | Basic options| --- | ---|---|---|
   | **text** | Y | String |`''` |  Text |
-  | **width** | N | Number | `256` |  Width |
-  | **height** | N | Number | `256` |  Height |
+  | **size** | N | Number | `256` |  Size |
   | **colorDark** | N | String | `#000000` | Dark CSS color |
   | **colorLight** | N | String | `#ffffff` | Light CSS color |
   | **backgroundColor** | N | String | `null` | Background CSS color |
@@ -210,4 +208,4 @@ Always set up AWS Lambda Function in the following order:
 
 - Access URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&enter-params-here>
 - Token: **b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b**
-- Sample URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?text=cuongbuitomosia&width=1200&height=1200&dotScale=0.5&degreeRotation=270&positionStyle=2&alignmentStyle=2&timingStyle=2&dotStyle=2&token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&quietZoneSize=1&quietZoneSizeUnit=module&quietZoneColor=red&backgroundColor=grey&logoPlaceholder=true&visualeadMode=true>
+- Sample URL: <https://2si9bysvoh.execute-api.ap-northeast-1.amazonaws.com/dev/generate_qrcode?text=cuongbuitomosia&size=1000&dotScale=0.5&degreeRotation=270&positionStyle=2&alignmentStyle=2&timingStyle=2&dotStyle=2&token=b57b22fd7a5979aa14939f56ac95af4297552addc46835cc695ec8f29377c0290148b&quietZoneSize=1&quietZoneSizeUnit=module&quietZoneColor=red&backgroundColor=grey&logoPlaceholder=true&visualeadMode=true>

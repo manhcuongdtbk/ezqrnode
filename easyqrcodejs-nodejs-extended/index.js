@@ -87,8 +87,7 @@ function _getTypeNumber(sText, _htOption) {
 class QRCode {
   constructor(vOption) {
     this._htOption = {
-      width: 1000,
-      height: 1000,
+      size: 1000,
       typeNumber: 4,
       colorDark: "rgba(0, 0, 0, 0.6)",
       colorLight: "rgba(255, 255, 255, 0.7)",
@@ -169,8 +168,7 @@ class QRCode {
     }
 
     const NUMBER_TYPE_OPTIONS = Object.freeze([
-      "width",
-      "height",
+      "size",
       "dotScale",
       "quietZoneSize",
       "logoWidth",
@@ -206,6 +204,14 @@ class QRCode {
       }
 
       Object.assign(this._htOption, vOption);
+    }
+
+    if (this._htOption.size < 0) {
+      console.warn(
+        `${this._htOption.size} is invalidate, size must greater than 0, now reset to 1000.`
+      );
+
+      this._htOption.size = 1000;
     }
 
     if (this._htOption.version < 0 || this._htOption.version > 40) {

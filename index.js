@@ -1,4 +1,4 @@
-const QRCode = require("./easyqrcodejs-nodejs-extended/");
+const QRCode = require("./easyqrcodejs-nodejs-extended");
 
 exports.handler = async event => {
   const options = event.queryStringParameters;

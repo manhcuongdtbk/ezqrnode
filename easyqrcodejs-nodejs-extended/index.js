@@ -206,23 +206,26 @@ class QRCode {
       Object.assign(this._htOption, vOption);
     }
 
-    if (this._htOption.size < 0) {
+    const minSize = 120;
+    const maxSize = 4000;
+
+    if (this._htOption.size < 120 || this._htOption.size > 4000) {
       console.warn(
-        `${this._htOption.size} is invalidate, size must greater than 0, now reset to 1000.`
+        `${this._htOption.size} is invalid, size must be between ${minSize} and ${maxSize}, now reset to 1000.`
       );
 
       this._htOption.size = 1000;
     }
 
     if (this._htOption.version < 0 || this._htOption.version > 40) {
-      console.warn(`QR Code version '${this._htOption.version}' is invalidate, reset to 0`);
+      console.warn(`QR Code version '${this._htOption.version}' is invalid, reset to 0`);
       this._htOption.version = 0;
     }
 
     this._htOption.format = this._htOption.format.toUpperCase();
 
     if (this._htOption.format !== "PNG" && this._htOption.format !== "JPG") {
-      console.warn(`Image format '${this._htOption.format}' is invalidate, reset to 'PNG'`);
+      console.warn(`Image format '${this._htOption.format}' is invalid, reset to 'PNG'`);
       this._htOption.format = "PNG";
     }
 
@@ -231,19 +234,19 @@ class QRCode {
       (this._htOption.compressionLevel < 0 || this._htOption.compressionLevel > 9)
     ) {
       console.warn(
-        `${this._htOption.compressionLevel} is invalidate, PNG compressionLevel must between 0 and 9, now reset to 0. `
+        `${this._htOption.compressionLevel} is invalid, PNG compressionLevel must between 0 and 9, now reset to 0. `
       );
       this._htOption.compressionLevel = 0;
     } else if (this._htOption.quality < 0 || this._htOption.quality > 1) {
       console.warn(
-        `${this._htOption.quality} is invalidate, JPG quality must between 0 and 1, now reset to 0.75. `
+        `${this._htOption.quality} is invalid, JPG quality must between 0 and 1, now reset to 0.75. `
       );
       this._htOption.quality = 0.75;
     }
 
     if (this._htOption.dotScale < 0 || this._htOption.dotScale > 1) {
       console.warn(
-        `${this._htOption.dotScale} is invalidate, dotScale must greater than 0, less than or equal to 1, now reset to 1.`
+        `${this._htOption.dotScale} is invalid, dotScale must greater than 0, less than or equal to 1, now reset to 1.`
       );
 
       this._htOption.dotScale = 1;
@@ -251,7 +254,7 @@ class QRCode {
 
     if (this._htOption.quietZoneSize < 0) {
       console.warn(
-        `${this._htOption.quietZoneSize} is invalidate, quietZoneSize must greater than or equal to 0, now reset to 0.`
+        `${this._htOption.quietZoneSize} is invalid, quietZoneSize must greater than or equal to 0, now reset to 0.`
       );
 
       this._htOption.quietZoneSize = 0;
@@ -262,7 +265,7 @@ class QRCode {
       this._htOption.quietZoneSizeUnit !== "module"
     ) {
       console.warn(
-        `Quiet zone size unit '${this._htOption.quietZoneSizeUnit}' is invalidate, reset to 'pixel'`
+        `Quiet zone size unit '${this._htOption.quietZoneSizeUnit}' is invalid, reset to 'pixel'`
       );
 
       this._htOption.quietZoneSizeUnit = "pixel";
@@ -270,7 +273,7 @@ class QRCode {
 
     if (this._htOption.backgroundImageAlpha < 0 || this._htOption.backgroundImageAlpha > 1) {
       console.warn(
-        `${this._htOption.backgroundImageAlpha} is invalidate, backgroundImageAlpha must between 0 and 1, now reset to 1. `
+        `${this._htOption.backgroundImageAlpha} is invalid, backgroundImageAlpha must between 0 and 1, now reset to 1. `
       );
 
       this._htOption.backgroundImageAlpha = 1;
@@ -279,25 +282,25 @@ class QRCode {
     const shapeNumber = [1, 2, 3, 4];
 
     if (!shapeNumber.includes(this._htOption.dotStyle)) {
-      console.warn(`Dot style '${this._htOption.dotStyle}' is invalidate, reset to '1'`);
+      console.warn(`Dot style '${this._htOption.dotStyle}' is invalid, reset to '1'`);
 
       this._htOption.dotStyle = 1;
     }
 
     if (!shapeNumber.includes(this._htOption.timingStyle)) {
-      console.warn(`Timing style '${this._htOption.timingStyle}' is invalidate, reset to 1`);
+      console.warn(`Timing style '${this._htOption.timingStyle}' is invalid, reset to 1`);
 
       this._htOption.timingStyle = 1;
     }
 
     if (!shapeNumber.slice(0, shapeNumber.length - 1).includes(this._htOption.positionStyle)) {
-      console.warn(`Position style '${this._htOption.positionStyle}' is invalidate, reset to 1`);
+      console.warn(`Position style '${this._htOption.positionStyle}' is invalid, reset to 1`);
 
       this._htOption.positionStyle = 1;
     }
 
     if (!shapeNumber.slice(0, shapeNumber.length - 1).includes(this._htOption.alignmentStyle)) {
-      console.warn(`Alignment style '${this._htOption.alignmentStyle}' is invalidate, reset to 1`);
+      console.warn(`Alignment style '${this._htOption.alignmentStyle}' is invalid, reset to 1`);
 
       this._htOption.alignmentStyle = 1;
     }

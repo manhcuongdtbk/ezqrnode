@@ -62,7 +62,7 @@ var qrcode = new QRCode(options);
   | --- | --- |--- | --- |--- |
   | Basic options| --- | ---|---|---|
   | **text** | Y | String |`''` |  Text |
-  | **size** | N | Number | `256` |  Size |
+  | **size** | N | Number | `1000` |  Size. Ranges: `120-4000` |
   | **colorDark** | N | String | `#000000` | Dark CSS color |
   | **colorLight** | N | String | `#ffffff` | Light CSS color |
   | **backgroundColor** | N | String | `null` | Background CSS color |
